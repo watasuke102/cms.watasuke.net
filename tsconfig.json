@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,9 +24,49 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@watasuke.net/*": [
+        "./watasuke.net/src/*"
+      ],
+      "@/feature/Ads": [
+        "./watasuke.net/src/components/feature/Ads"
+      ],
+      "@/feature/Article": [
+        "./src/components/external/article.ts"
+      ],
+      "@/feature/Article/*": [
+        "./src/components/external/article.ts"
+      ],
+      "@/feature/Tag": [
+        "./src/components/external/tag.ts"
+      ],
+      "@/common": [
+        "./src/components/external/common.ts"
+      ],
+      "@/common/color": [
+        "./watasuke.net/src/components/common/color.ts"
+      ],
+      "@config": [
+        "./config.ts"
+      ],
+      "@assets/*": [
+        "./watasuke.net/src/assets/*"
+      ],
+      "@utils/*": [
+        "./watasuke.net/src/utils/*"
+      ],
+      "@mytypes/*": [
+        "./watasuke.net/src/types/*"
+      ],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/layout.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/layout.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
