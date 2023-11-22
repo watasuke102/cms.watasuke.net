@@ -6,7 +6,8 @@
 // This software is released under the MIT or MIT SUSHI-WARE License.
 import React from 'react';
 import '@watasuke.net/components/common/main.css';
-import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
+// import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
+import {BlogContent} from '../../watasuke.net/src/components/feature/Article/BlogContent/BlogContent';
 
 export default function Top() {
   // Prism.jsのhighlightAllでhydration errorが出るのを回避する
