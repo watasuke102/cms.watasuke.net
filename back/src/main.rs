@@ -5,6 +5,7 @@ type Schema = RootNode<'static, Query, EmptyMutation<Context>, EmptySubscription
 
 mod articles;
 mod config;
+mod sitedata;
 mod tags;
 
 #[derive(Clone, Copy, Debug)]
@@ -17,20 +18,26 @@ impl Query {
   fn tags(context: &Context) -> &Vec<tags::Tag> {
     &context.tags
   }
+  fn sitedata(context: &Context) -> &sitedata::Sitedata {
+    &context.sitedata
+  }
 }
 
 #[derive(Clone, Debug)]
 pub struct Context {
   articles: Vec<Article>,
   tags:     Vec<tags::Tag>,
+  sitedata: sitedata::Sitedata,
 }
 impl juniper::Context for Context {}
 impl Context {
   fn new() -> anyhow::Result<Self> {
     let config = config::Config::get();
-    let articles = articles::read_articles(&config.contents_path)?;
-    let tags = tags::read_tags(&config.contents_path);
-    Ok(Context { articles, tags })
+    Ok(Context {
+      articles: articles::read_articles(&config.contents_path)?,
+      tags:     tags::read_tags(&config.contents_path),
+      sitedata: sitedata::read_sitedata(&config.contents_path)?,
+    })
   }
 }
 
