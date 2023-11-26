@@ -1,90 +1,76 @@
-use anyhow::anyhow;
-use regex::Regex;
-use serde::Deserialize;
-use yaml_front_matter::{Document, YamlFrontMatter};
+use articles::Article;
+use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
+use rocket::{response::content, State};
+type Schema = RootNode<'static, Query, EmptyMutation<Context>, EmptySubscription<Context>>;
 
-#[derive(Debug, Deserialize)]
-struct Config {
-  articles_path: String,
-}
+mod articles;
+mod config;
+mod tags;
 
-#[derive(Debug, Deserialize)]
-struct Frontmatter {
-  title:        String,
-  tags:         Vec<String>,
-  favorite:     bool,
-  published_at: String,
-  updated_at:   String,
-}
-#[derive(Debug)]
-struct Article {
-  slug:        String,
-  body:        String,
-  year:        u16,
-  frontmatter: Frontmatter,
-}
-
-fn main() -> anyhow::Result<()> {
-  let config: Config = toml::from_str(&std::fs::read_to_string("config.toml")?)?;
-  // <article_path>/<year>/<index>_<title>/article.md
-  let articles = read_articles(config.articles_path)?;
-  for article in articles {
-    println!("{:#?}", article);
+#[derive(Clone, Copy, Debug)]
+struct Query;
+#[graphql_object(context = crate::Context)]
+impl Query {
+  fn articles(context: &Context) -> &Vec<Article> {
+    &context.articles
   }
-  Ok(())
+  fn tags(context: &Context) -> &Vec<tags::Tag> {
+    &context.tags
+  }
 }
 
-fn read_articles(article_path: String) -> anyhow::Result<Vec<Article>> {
-  let re = Regex::new(r"^[0-9]{2}_([0-9a-z\-]+)")?;
-  let mut article_mds: Vec<Article> = Vec::new();
-
-  let article_years = std::fs::read_dir(article_path)?;
-  for year in article_years {
-    let year = year?;
-    if !year.metadata()?.is_dir() {
-      return Err(anyhow!(
-        "items under article folder must be a directory (named a year)"
-      ));
-    }
-    let year_num = String::from(year.file_name().to_str().unwrap()).parse()?;
-
-    let articles = std::fs::read_dir(year.path())?;
-    for article in articles {
-      let article = article?;
-      if !article.metadata()?.is_dir() {
-        return Err(anyhow!(
-          "items under article/<year> folder must be a directory"
-        ));
-      }
-
-      let slug = {
-        let dirname = article.file_name();
-        let Some(slug) = re.captures(dirname.to_str().unwrap_or("")) else {
-          // The article has not published yet (or invalid name)
-          continue;
-        };
-        String::from(slug.get(1).unwrap().as_str())
-      };
-
-      let Ok(article_md) = std::fs::read_to_string(article.path().join("article.md")) else {
-        println!("{:?} doesn't have `article.md`; ignored", article.path());
-        continue;
-      };
-      let mut md: Document<Frontmatter> =
-        YamlFrontMatter::parse(article_md.as_str()).expect("Failed to parse article.md");
-      loop {
-        if !md.content.starts_with('\n') {
-          break;
-        }
-        md.content.remove(0);
-      }
-      article_mds.push(Article {
-        slug,
-        year: year_num,
-        body: md.content,
-        frontmatter: md.metadata,
-      });
-    }
+#[derive(Clone, Debug)]
+pub struct Context {
+  articles: Vec<Article>,
+  tags:     Vec<tags::Tag>,
+}
+impl juniper::Context for Context {}
+impl Context {
+  fn new() -> anyhow::Result<Self> {
+    let config = config::Config::get();
+    let articles = articles::read_articles(&config.contents_path)?;
+    let tags = tags::read_tags(&config.contents_path);
+    Ok(Context { articles, tags })
   }
-  Ok(article_mds)
+}
+
+#[rocket::get("/")]
+fn graphiql() -> content::RawHtml<String> {
+  juniper_rocket::graphiql_source("/graphql", None)
+}
+
+#[rocket::get("/graphql?<request>")]
+fn get_graphql_handler(
+  context: &State<Context>,
+  request: juniper_rocket::GraphQLRequest,
+  schema: &State<Schema>,
+) -> juniper_rocket::GraphQLResponse {
+  request.execute_sync(schema, context)
+}
+
+#[rocket::post("/graphql", data = "<request>")]
+fn post_graphql_handler(
+  context: &State<Context>,
+  request: juniper_rocket::GraphQLRequest,
+  schema: &State<Schema>,
+) -> juniper_rocket::GraphQLResponse {
+  request.execute_sync(schema, context)
+}
+
+#[rocket::main]
+async fn main() {
+  rocket::build()
+    .manage(Context::new().unwrap())
+    .manage(Schema::new(
+      Query,
+      EmptyMutation::<Context>::new(),
+      EmptySubscription::<Context>::new(),
+    ))
+    .mount(
+      "/",
+      rocket::routes![graphiql, get_graphql_handler, post_graphql_handler],
+    )
+    .launch()
+    .await
+    .unwrap();
 }

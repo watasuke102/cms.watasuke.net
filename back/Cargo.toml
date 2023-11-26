@@ -7,7 +7,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
+juniper = { git = "https://github.com/graphql-rust/juniper" }
+juniper_rocket = { git = "https://github.com/graphql-rust/juniper" }
 regex = "1.10.2"
+rocket = "0.5.0"
 serde = "1.0.193"
 toml = "0.8.8"
 yaml-front-matter = "0.1.0"
