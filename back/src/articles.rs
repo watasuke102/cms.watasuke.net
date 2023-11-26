@@ -53,7 +53,7 @@ pub fn read_articles(contents_path: &String) -> anyhow::Result<Vec<Article>> {
   let re = Regex::new(r"^[0-9]{2}_([0-9a-z\-]+)")?;
   let mut article_mds: Vec<Article> = Vec::new();
 
-  let article_years = std::fs::read_dir(Path::new(&contents_path).join("article"))?;
+  let article_years = std::fs::read_dir(Path::new(&contents_path).join("articles"))?;
   for year in article_years {
     let year = year?;
     if !year.metadata()?.is_dir() {
