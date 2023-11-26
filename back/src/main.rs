@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use articles::Article;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
 use rocket::{response::content, State};
@@ -65,19 +67,28 @@ fn post_graphql_handler(
 }
 
 #[rocket::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
+  let schema = Schema::new(
+    Query,
+    EmptyMutation::<Context>::new(),
+    EmptySubscription::<Context>::new(),
+  );
+
+  {
+    let graphql_dir = std::env::current_dir()?.join("../watasuke.net/graphql");
+    std::fs::create_dir_all(&graphql_dir)?;
+    let mut schema_file = std::fs::File::create(graphql_dir.join("schema.graphql"))?;
+    schema_file.write_all(schema.as_schema_language().as_bytes())?;
+  }
+
   rocket::build()
-    .manage(Context::new().unwrap())
-    .manage(Schema::new(
-      Query,
-      EmptyMutation::<Context>::new(),
-      EmptySubscription::<Context>::new(),
-    ))
+    .manage(Context::new()?)
+    .manage(schema)
     .mount(
       "/",
       rocket::routes![graphiql, get_graphql_handler, post_graphql_handler],
     )
     .launch()
-    .await
-    .unwrap();
+    .await?;
+  Ok(())
 }
