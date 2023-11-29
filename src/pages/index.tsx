@@ -1,16 +1,18 @@
-// layout.tsx
+// index.tsx
 //
 // CopyRight (c) 2023 Watasuke
 // Email  : <watasuke102@gmail.com>
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
 import React from 'react';
+import {css} from '../features/pages/index.css';
 import '@watasuke.net/components/common/main.css';
-// import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
-import {BlogContent} from '../../watasuke.net/src/components/feature/Article/BlogContent/BlogContent';
+import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
 
-export default function Top() {
-  // Prism.jsのhighlightAllでhydration errorが出るのを回避する
+export default function Top(): JSX.Element {
+  const [body, set_body] = React.useState(md);
+
+  // hydration errorが出るのを回避する
   const [mounted, set_mounted] = React.useState(false);
   React.useEffect(() => set_mounted(true), []);
   if (!mounted) {
@@ -18,29 +20,38 @@ export default function Top() {
   }
 
   return (
-    <BlogContent
-      data={{
-        title: 'GitHub Codespaces+Rust+Bevyで最高の開発環境を作ろうと思ったけど駄目だった',
-        slug: 'rust-bevy-codespaces-nice',
-        body: md,
-        // body: '## Article test\n\nHello `world` !\n\n```rust\nfn main() { println!("Hello"); }\n```\n\nhttps://twitter.com/github/status/1590978384254959617\n\n- [Browser (WebAssembly) - Unofficial Bevy Cheat Book](https://bevy-cheatbook.github.io/platforms/wasm.html)\n- https://bevy-cheatbook.github.io/platforms/wasm.html\n\n',
-        published_at: '2023-01-09T03:32:05.000Z',
-        thumbnail: '',
-        updated_at: '2023-05-05T13:41:20.000Z',
-        tags: [
-          {
-            name: 'tag0',
-            slug: 'tag0',
-          },
-        ],
-      }}
-    />
+    <>
+      <header className={css.header}></header>
+      <section className={css.container}>
+        <div className={css.editor}>
+          <div className={css.toolbox}>editor menu</div>
+          <textarea className={css.textarea} value={body} onChange={e => set_body(e.target.value)} />
+        </div>
+        <div className={css.preview}>
+          <BlogContent
+            data={{
+              title: 'GitHub Codespaces+Rust+Bevyで最高の開発環境を作ろうと思ったけど駄目だった',
+              slug: 'rust-bevy-codespaces-nice',
+              body: body,
+              published_at: '2023-01-09T03:32:05.000Z',
+              updated_at: '2023-05-05T13:41:20.000Z',
+              tags: [
+                {
+                  name: 'tag0',
+                  slug: 'tag0',
+                },
+              ],
+            }}
+          />
+        </div>
+      </section>
+    </>
   );
 }
 
-const md = `
+const md = `## Embed test
 
-## Embed test
+![img](https://data.watasuke.net/untitled.jpg)
 
 自分のブログ
 
