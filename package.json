@@ -10,10 +10,16 @@
     "dev": "next dev -p 10211",
     "build": "next build",
     "start": "next start",
+    "gen": "gql-gen --config graphql/codegen.ts",
     "lint": "next lint",
     "fmt": "prettier --write src/"
   },
   "dependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-graphql-request": "^6.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "20.9.4",
     "@types/react": "18.2.38",

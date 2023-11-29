@@ -8,10 +8,14 @@
 
 import React from 'react';
 import {css} from './editor.css';
-import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
 import '@watasuke.net/components/common/main.css';
+import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
 
-export default function Top(): JSX.Element {
+type Props = {
+  params: {slug: string};
+};
+
+export default function Top(props: Props): JSX.Element {
   const [body, set_body] = React.useState(md);
 
   // hydration errorが出るのを回避する

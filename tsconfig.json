@@ -24,9 +24,13 @@
       }
     ],
     "paths": {
+      "@cms-utils/*": [
+        "./src/utils/*"
+      ],
       "@watasuke.net/*": [
         "./watasuke.net/src/*"
       ],
+      // overrides
       "@/feature/Ads": [
         "./watasuke.net/src/components/feature/Ads"
       ],

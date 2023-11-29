@@ -88,8 +88,8 @@ async fn main() -> anyhow::Result<()> {
     EmptySubscription::<Context>::new(),
   );
 
-  {
-    let graphql_dir = std::env::current_dir()?.join("../watasuke.net/graphql");
+  for path in ["../watasuke.net/graphql", "../graphql"] {
+    let graphql_dir = std::env::current_dir()?.join(path);
     std::fs::create_dir_all(&graphql_dir)?;
     let mut schema_file = std::fs::File::create(graphql_dir.join("schema.graphql"))?;
     schema_file.write_all(schema.as_schema_language().as_bytes())?;

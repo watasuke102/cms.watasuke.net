@@ -1,0 +1,30 @@
+type Sitedata {
+  profile: String!
+  shortProfile: String!
+}
+
+type Tag {
+  slug: String!
+  name: String!
+}
+
+type Article {
+  slug: String!
+  body: String!
+  year: Int!
+  title: String!
+  tags: [Tag!]!
+  isFavorite: Boolean!
+  publishedAt: String!
+  updatedAt: String!
+}
+
+type Query {
+  articles: [Article!]!
+  tags: [Tag!]!
+  sitedata: Sitedata!
+}
+
+schema {
+  query: Query
+}
