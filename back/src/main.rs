@@ -14,11 +14,11 @@ mod tags;
 struct Query;
 #[graphql_object(context = crate::Context)]
 impl Query {
-  fn articles(context: &Context) -> &Vec<Article> {
-    &context.articles
+  fn articles(context: &Context) -> Vec<Article> {
+    context.articles.iter().map(|e| (*e.1).clone()).collect()
   }
-  fn tags(context: &Context) -> &Vec<tags::Tag> {
-    &context.tags
+  fn tags(context: &Context) -> Vec<tags::Tag> {
+    context.tags.iter().map(|e| (*e.1).clone()).collect()
   }
   fn sitedata(context: &Context) -> &sitedata::Sitedata {
     &context.sitedata
@@ -27,17 +27,18 @@ impl Query {
 
 #[derive(Clone, Debug)]
 pub struct Context {
-  articles: Vec<Article>,
-  tags:     Vec<tags::Tag>,
+  articles: articles::Articles,
+  tags:     tags::Tags,
   sitedata: sitedata::Sitedata,
 }
 impl juniper::Context for Context {}
 impl Context {
   fn new() -> anyhow::Result<Self> {
     let config = config::Config::get();
+    let tags = tags::read_tags(&config.contents_path);
     Ok(Context {
-      articles: articles::read_articles(&config.contents_path)?,
-      tags:     tags::read_tags(&config.contents_path),
+      articles: articles::read_articles(&config.contents_path, &tags)?,
+      tags:     tags,
       sitedata: sitedata::read_sitedata(&config.contents_path)?,
     })
   }
