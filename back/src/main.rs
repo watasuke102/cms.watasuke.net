@@ -14,11 +14,11 @@ mod tags;
 struct Query;
 #[graphql_object(context = crate::Context)]
 impl Query {
-  fn articles(context: &Context) -> Vec<Article> {
-    context.articles.iter().map(|e| (*e.1).clone()).collect()
+  fn articles(context: &Context) -> Vec<&Article> {
+    context.articles.iter().map(|e| e.1).collect()
   }
-  fn tags(context: &Context) -> Vec<tags::Tag> {
-    context.tags.iter().map(|e| (*e.1).clone()).collect()
+  fn tags(context: &Context) -> Vec<&tags::Tag> {
+    context.tags.iter().map(|e| e.1).collect()
   }
   fn sitedata(context: &Context) -> &sitedata::Sitedata {
     &context.sitedata
