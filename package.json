@@ -1,8 +1,11 @@
 {
-  "name": "front",
+  "name": "cms.watasuke.net",
   "version": "0.1.0",
   "private": true,
   "author": "watasuke102",
+  "workspaces": [
+    "watasuke.net"
+  ],
   "scripts": {
     "dev": "next dev -p 10211",
     "build": "next build",
@@ -31,10 +34,12 @@
     "typescript": "5.3.2"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "eslint": "8.54.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-next": "14.0.3",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "prettier": "^3.1.0"
   }
 }
