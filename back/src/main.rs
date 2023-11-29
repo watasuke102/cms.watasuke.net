@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{io::Write, path::Path};
 
 use articles::Article;
 use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
@@ -67,6 +67,19 @@ fn post_graphql_handler(
   request.execute_sync(schema, context)
 }
 
+#[rocket::get("/img/<slug>/<img_name>")]
+async fn handle_img(
+  slug: &str,
+  img_name: &str,
+  context: &State<Context>,
+) -> Option<rocket::fs::NamedFile> {
+  let Some(article) = context.articles.get(slug) else {
+    return None;
+  };
+  let path = Path::new(article.article_path()).join(img_name);
+  rocket::fs::NamedFile::open(path).await.ok()
+}
+
 #[rocket::main]
 async fn main() -> anyhow::Result<()> {
   let schema = Schema::new(
@@ -87,7 +100,12 @@ async fn main() -> anyhow::Result<()> {
     .manage(schema)
     .mount(
       "/",
-      rocket::routes![graphiql, get_graphql_handler, post_graphql_handler],
+      rocket::routes![
+        graphiql,
+        get_graphql_handler,
+        post_graphql_handler,
+        handle_img
+      ],
     )
     .launch()
     .await?;
