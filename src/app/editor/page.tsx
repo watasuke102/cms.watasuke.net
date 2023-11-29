@@ -1,13 +1,15 @@
-// index.tsx
+// page.tsx
 //
 // CopyRight (c) 2023 Watasuke
 // Email  : <watasuke102@gmail.com>
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
+'use client';
+
 import React from 'react';
-import {css} from '../features/pages/index.css';
-import '@watasuke.net/components/common/main.css';
+import {css} from './editor.css';
 import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
+import '@watasuke.net/components/common/main.css';
 
 export default function Top(): JSX.Element {
   const [body, set_body] = React.useState(md);

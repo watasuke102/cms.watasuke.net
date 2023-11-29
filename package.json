@@ -21,6 +21,7 @@
     "@vanilla-extract/css": "^1.14.0",
     "@vanilla-extract/next-plugin": "^2.3.2",
     "framer-motion": "^10.16.5",
+    "gardevoir": "^1.0.0",
     "highlight.js": "^11.9.0",
     "next": "14.0.3",
     "react": "18.2.0",
