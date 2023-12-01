@@ -5,7 +5,14 @@
 # Twitter: @Watasuke102
 # This software is released under the MIT or MIT SUSHI-WARE License.
 query allArticles {
-  articles {
+  allArticles {
+    slug
+    title
+  }
+}
+
+query article($slug: String!) {
+  article(slug: $slug) {
     slug
     title
     publishedAt

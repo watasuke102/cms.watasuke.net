@@ -6,55 +6,78 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
 };
 
 export type Article = {
   __typename?: 'Article';
-  body: Scalars['String'];
-  isFavorite: Scalars['Boolean'];
-  publishedAt: Scalars['String'];
-  slug: Scalars['String'];
+  body: Scalars['String']['output'];
+  isFavorite: Scalars['Boolean']['output'];
+  publishedAt: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
   tags: Array<Tag>;
-  title: Scalars['String'];
-  updatedAt: Scalars['String'];
-  year: Scalars['Int'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  year: Scalars['Int']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  articles: Array<Article>;
+  allArticles: Array<Article>;
+  allTags: Array<Tag>;
+  article?: Maybe<Article>;
   sitedata: Sitedata;
-  tags: Array<Tag>;
+};
+
+
+export type QueryArticleArgs = {
+  slug: Scalars['String']['input'];
 };
 
 export type Sitedata = {
   __typename?: 'Sitedata';
-  profile: Scalars['String'];
-  shortProfile: Scalars['String'];
+  profile: Scalars['String']['output'];
+  shortProfile: Scalars['String']['output'];
 };
 
 export type Tag = {
   __typename?: 'Tag';
-  name: Scalars['String'];
-  slug: Scalars['String'];
+  name: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
 };
 
 export type AllArticlesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllArticlesQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> }> };
+export type AllArticlesQuery = { __typename?: 'Query', allArticles: Array<{ __typename?: 'Article', slug: string, title: string }> };
+
+export type ArticleQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
 
 
 export const AllArticlesDocument = gql`
     query allArticles {
-  articles {
+  allArticles {
+    slug
+    title
+  }
+}
+    `;
+export const ArticleDocument = gql`
+    query article($slug: String!) {
+  article(slug: $slug) {
     slug
     title
     publishedAt
@@ -77,6 +100,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     allArticles(variables?: AllArticlesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<AllArticlesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<AllArticlesQuery>(AllArticlesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allArticles', 'query');
+    },
+    article(variables: ArticleQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<ArticleQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ArticleQuery>(ArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'article', 'query');
     }
   };
 }

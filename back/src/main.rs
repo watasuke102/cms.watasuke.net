@@ -14,10 +14,13 @@ mod tags;
 struct Query;
 #[graphql_object(context = crate::Context)]
 impl Query {
-  fn articles(context: &Context) -> Vec<&Article> {
+  fn all_articles(context: &Context) -> Vec<&Article> {
     context.articles.iter().map(|e| e.1).collect()
   }
-  fn tags(context: &Context) -> Vec<&tags::Tag> {
+  fn article(slug: String, context: &Context) -> Option<&Article> {
+    context.articles.get(&slug)
+  }
+  fn all_tags(context: &Context) -> Vec<&tags::Tag> {
     context.tags.iter().map(|e| e.1).collect()
   }
   fn sitedata(context: &Context) -> &sitedata::Sitedata {
@@ -98,6 +101,7 @@ async fn main() -> anyhow::Result<()> {
   rocket::build()
     .manage(Context::new()?)
     .manage(schema)
+    .attach(rocket_cors::CorsOptions::default().to_cors().unwrap())
     .mount(
       "/",
       rocket::routes![

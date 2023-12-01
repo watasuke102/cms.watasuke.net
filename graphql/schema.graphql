@@ -20,8 +20,9 @@ type Article {
 }
 
 type Query {
-  articles: [Article!]!
-  tags: [Tag!]!
+  allArticles: [Article!]!
+  article(slug: String!): Article
+  allTags: [Tag!]!
   sitedata: Sitedata!
 }
 

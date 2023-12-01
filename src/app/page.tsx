@@ -14,9 +14,9 @@ export default async function Top(): Promise<JSX.Element> {
   const data = await sdk.allArticles();
   return (
     <ul>
-      {data.articles.map(e => {
+      {data.allArticles.map(e => {
         return (
-          <li key={e.slug} >
+          <li key={e.slug}>
             <Link href={`/editor/${e.slug}`}>
               {e.slug}, {e.title}
             </Link>
