@@ -5,9 +5,9 @@
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
 import React from 'react';
+import '@watasuke.net/components/common/main.css';
 import './global.css';
 import {css} from './index.css';
-import '@watasuke.net/components/common/main.css';
 
 export default function RootLayout({children}: {children: React.ReactNode}): JSX.Element {
   return (

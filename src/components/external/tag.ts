@@ -1,3 +1,3 @@
-import { TagContainer } from './TagContainer/TagContainer';
+import {TagContainer} from './TagContainer/TagContainer';
 
-export { TagContainer };
+export {TagContainer};

@@ -13,6 +13,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react', '@typescript-eslint', 'unused-imports', 'react-hooks'],
+  ignorePatterns: ['graphql.ts'],
   rules: {
     indent: [
       'error',

@@ -5,14 +5,13 @@ arrowParens: 'avoid'
 trailingComma: 'all'
 jsxSingleQuote: true
 bracketSpacing: false
-
-plugins:
-  - '@trivago/prettier-plugin-sort-imports'
-# importの種類ごとに改行を挟まない
-importOrderSeparation: false
-importOrderCaseInsensitive: false
-importOrder:
-  - '^react$'
-  - '\.css$'
-  - '^@watasuke.net'
-  - '<THIRD_PARTY_MODULES>'
+# plugins:
+#   - '@trivago/prettier-plugin-sort-imports'
+# # importの種類ごとに改行を挟まない
+# importOrderSeparation: false
+# importOrderCaseInsensitive: false
+# importOrder:
+#   - '^react$'
+#   - '<THIRD_PARTY_MODULES>'
+#   - '^@watasuke.net'
+#   - '\.css$'

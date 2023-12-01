@@ -5,6 +5,7 @@
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
 'use client';
+
 import React from 'react';
 import {css} from './MdEditor.css';
 

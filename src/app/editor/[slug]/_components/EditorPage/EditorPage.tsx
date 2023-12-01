@@ -5,13 +5,14 @@
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
 'use client';
+
 import React from 'react';
-import {css} from './EditorPage.css';
-import MdEditor from '../MdEditor/MdEditor';
-import {ArticleQuery} from '@cms-utils/graphql';
 import {BlogContent} from '@watasuke.net/components/feature/Article/BlogContent/BlogContent';
-import Loading from '../../loading';
 import Link from 'next/link';
+import {ArticleQuery} from '@cms-utils/graphql';
+import MdEditor from '../MdEditor/MdEditor';
+import Loading from '../../loading';
+import {css} from './EditorPage.css';
 
 type Props = {
   article: NonNullable<ArticleQuery['article']>;
