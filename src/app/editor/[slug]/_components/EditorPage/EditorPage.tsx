@@ -19,7 +19,6 @@ type Props = {
 };
 
 export default function EditorPage({article}: Props): JSX.Element {
-  console.log('page.tsx');
   const [body, set_body] = React.useState<string | undefined>();
 
   // hydration errorが出るのを回避する
