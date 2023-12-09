@@ -29,6 +29,20 @@ export type Article = {
   year: Scalars['Int']['output'];
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  updateArticle: Scalars['String']['output'];
+};
+
+
+export type MutationUpdateArticleArgs = {
+  body: Scalars['String']['input'];
+  isFavorite: Scalars['Boolean']['input'];
+  slug: Scalars['String']['input'];
+  tags: Array<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+};
+
 export type Query = {
   __typename?: 'Query';
   allArticles: Array<Article>;
@@ -66,6 +80,17 @@ export type ArticleQueryVariables = Exact<{
 
 export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
 
+export type UpdateArticleMutationVariables = Exact<{
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  tags: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  isFavorite: Scalars['Boolean']['input'];
+  body: Scalars['String']['input'];
+}>;
+
+
+export type UpdateArticleMutation = { __typename?: 'Mutation', updateArticle: string };
+
 
 export const AllArticlesDocument = gql`
     query allArticles {
@@ -90,6 +115,17 @@ export const ArticleDocument = gql`
   }
 }
     `;
+export const UpdateArticleDocument = gql`
+    mutation updateArticle($slug: String!, $title: String!, $tags: [String!]!, $isFavorite: Boolean!, $body: String!) {
+  updateArticle(
+    slug: $slug
+    title: $title
+    tags: $tags
+    isFavorite: $isFavorite
+    body: $body
+  )
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -103,6 +139,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     article(variables: ArticleQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<ArticleQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ArticleQuery>(ArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'article', 'query');
+    },
+    updateArticle(variables: UpdateArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateArticleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateArticleMutation>(UpdateArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateArticle', 'mutation');
     }
   };
 }

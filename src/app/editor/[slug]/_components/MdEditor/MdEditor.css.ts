@@ -14,9 +14,11 @@ export const css = {
     height: '100%',
   }),
   toolbox: style({
+    display: 'flex',
+    width: '100%',
+    gap: 12,
     padding: '4px 12px',
-    backgroundColor: color.fg,
-    color: color.bg,
+    border: `1px solid ${color.fg}`,
   }),
   textarea: style({
     resize: 'none',

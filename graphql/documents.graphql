@@ -24,3 +24,7 @@ query article($slug: String!) {
     body
   }
 }
+
+mutation updateArticle($slug: String!, $title: String!, $tags: [String!]!, $isFavorite: Boolean!, $body: String!) {
+  updateArticle(slug: $slug, title: $title, tags: $tags, isFavorite: $isFavorite, body: $body)
+}

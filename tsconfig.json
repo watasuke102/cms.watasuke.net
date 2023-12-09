@@ -31,6 +31,9 @@
       "@cms-common/*": [
         "./src/common/*"
       ],
+      "@cms-assets/*": [
+        "./src/assets/*"
+      ],
       "@watasuke.net/*": [
         "./watasuke.net/src/*"
       ],
