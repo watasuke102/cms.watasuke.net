@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::path::Path;
 use yaml_front_matter::{Document, YamlFrontMatter};
 
-use crate::tags;
+use super::tags;
 
 #[derive(Clone, Debug, Deserialize)]
 struct Frontmatter {

@@ -1,58 +1,12 @@
 use std::{io::Write, path::Path};
 
-use articles::Article;
-use juniper::{graphql_object, graphql_value, EmptyMutation, EmptySubscription, RootNode};
+use juniper::{EmptyMutation, EmptySubscription, RootNode};
 use rocket::{response::content, State};
-type Schema = RootNode<'static, Query, EmptyMutation<Context>, EmptySubscription<Context>>;
+type Schema = RootNode<'static, query::Query, EmptyMutation<Context>, EmptySubscription<Context>>;
 
-mod articles;
+mod cms;
 mod config;
-mod sitedata;
-mod tags;
-
-#[derive(Clone, Copy, Debug)]
-struct Query;
-#[graphql_object(context = crate::Context)]
-impl Query {
-  fn all_articles(context: &Context) -> juniper::FieldResult<Vec<Article>> {
-    let tags = tags::read_tags(&context.config.contents_path);
-    match articles::read_articles(&context.config.contents_path, &tags) {
-      Ok(articles) => Ok(articles.into_iter().map(|e| e.1).collect()),
-      Err(_) => Err(juniper::FieldError::new(
-        "read_articles() failed",
-        graphql_value!({"internal_error": "Internal Server Error"}),
-      )),
-    }
-  }
-  fn article(slug: String, context: &Context) -> juniper::FieldResult<Option<Article>> {
-    let tags = tags::read_tags(&context.config.contents_path);
-    let Ok(articles) = articles::read_articles(&context.config.contents_path, &tags) else {
-      return Err(juniper::FieldError::new(
-        "read_articles() failed",
-        graphql_value!({"internal_error": "Internal Server Error"}),
-      ));
-    };
-    match articles.get(&slug) {
-      Some(article) => Ok(Some(article.clone())),
-      None => Ok(None),
-    }
-  }
-  fn all_tags(context: &Context) -> Vec<tags::Tag> {
-    tags::read_tags(&context.config.contents_path)
-      .into_iter()
-      .map(|e| e.1)
-      .collect()
-  }
-  fn sitedata(context: &Context) -> juniper::FieldResult<sitedata::Sitedata> {
-    match sitedata::read_sitedata(&context.config.contents_path) {
-      Ok(sitedata) => Ok(sitedata),
-      Err(_) => Err(juniper::FieldError::new(
-        "read_sitedata() failed",
-        graphql_value!({"internal_error": "Internal Server Error"}),
-      )),
-    }
-  }
-}
+mod query;
 
 #[derive(Clone, Debug)]
 pub struct Context {
@@ -96,8 +50,8 @@ async fn handle_img(
   img_name: &str,
   context: &State<Context>,
 ) -> Option<rocket::fs::NamedFile> {
-  let tags = tags::read_tags(&context.config.contents_path);
-  let Ok(articles) = articles::read_articles(&context.config.contents_path, &tags) else {
+  let tags = cms::tags::read_tags(&context.config.contents_path);
+  let Ok(articles) = cms::articles::read_articles(&context.config.contents_path, &tags) else {
     return None;
   };
   let Some(article) = articles.get(slug) else {
@@ -110,7 +64,7 @@ async fn handle_img(
 #[rocket::main]
 async fn main() -> anyhow::Result<()> {
   let schema = Schema::new(
-    Query,
+    query::Query,
     EmptyMutation::<Context>::new(),
     EmptySubscription::<Context>::new(),
   );
