@@ -1,12 +1,13 @@
-use std::{io::Write, path::Path};
-
-use juniper::{EmptyMutation, EmptySubscription, RootNode};
-use rocket::{response::content, State};
-type Schema = RootNode<'static, query::Query, EmptyMutation<Context>, EmptySubscription<Context>>;
-
 mod cms;
 mod config;
+mod mutation;
 mod query;
+
+use std::{io::Write, path::Path};
+
+use juniper::{EmptySubscription, RootNode};
+use rocket::{response::content, State};
+type Schema = RootNode<'static, query::Query, mutation::Mutation, EmptySubscription<Context>>;
 
 #[derive(Clone, Debug)]
 pub struct Context {
@@ -65,7 +66,7 @@ async fn handle_img(
 async fn main() -> anyhow::Result<()> {
   let schema = Schema::new(
     query::Query,
-    EmptyMutation::<Context>::new(),
+    mutation::Mutation::default(),
     EmptySubscription::<Context>::new(),
   );
 

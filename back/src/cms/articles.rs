@@ -1,4 +1,5 @@
 use anyhow::anyhow;
+use chrono::{FixedOffset, Utc};
 use juniper::graphql_object;
 use regex::Regex;
 use serde::Deserialize;
@@ -16,6 +17,27 @@ struct Frontmatter {
   published_at: String,
   updated_at:   String,
 }
+impl std::fmt::Display for Frontmatter {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let tags = self
+      .tags
+      .iter()
+      .map(|tag| format!("'{}'", tag))
+      .collect::<Vec<String>>()
+      .join(", ");
+    write!(
+      f,
+      r"---
+title:        '{}'
+tags:         [{}]
+is_favorite:  {}
+published_at: '{}'
+updated_at:   '{}'
+---",
+      self.title, tags, self.is_favorite, self.published_at, self.updated_at
+    )
+  }
+}
 
 #[derive(Clone, Debug)]
 pub struct Article {
@@ -29,6 +51,30 @@ pub struct Article {
 impl Article {
   pub fn article_path(&self) -> &str {
     &self.article_path
+  }
+
+  pub fn update(
+    &self,
+    title: String,
+    tags: Vec<String>,
+    is_favorite: bool,
+    body: String,
+  ) -> anyhow::Result<()> {
+    let now = Utc::now().with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap());
+    let frontmatter = Frontmatter {
+      title,
+      tags,
+      is_favorite,
+      published_at: self.frontmatter.published_at.clone(),
+      updated_at: now.format("%Y-%m-%dT%H:%M:%S").to_string(),
+    };
+
+    std::fs::write(
+      Path::new(&self.article_path).join("article.md"),
+      format!("{}\n\n{}", frontmatter, body),
+    )?;
+
+    Ok(())
   }
 }
 #[graphql_object(context = crate::Context)]
