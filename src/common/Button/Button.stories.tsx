@@ -1,3 +1,9 @@
+// cms.watasuke.net
+// CopyRight (c) 2023 watasuke
+//
+// Email  : <watasuke102@gmail.com>
+// Twitter: @Watasuke102
+// This software is released under the MIT or MIT SUSHI-WARE License.
 import type {Meta, StoryObj} from '@storybook/react';
 import '@watasuke.net/components/common/main.css';
 import '@cms-common/global.css';
@@ -11,21 +17,21 @@ const meta: Meta<typeof Button> = {
 };
 export default meta;
 
-export const text: StoryObj<typeof Button> = {
+export const Text: StoryObj<typeof Button> = {
   args: {
     type: 'text',
     text: 'Button',
   },
 };
 
-export const outlined: StoryObj<typeof Button> = {
+export const Outlined: StoryObj<typeof Button> = {
   args: {
     type: 'outlined',
     text: 'Button',
   },
 };
 
-export const contained: StoryObj<typeof Button> = {
+export const Contained: StoryObj<typeof Button> = {
   args: {
     type: 'contained',
     text: 'Button',

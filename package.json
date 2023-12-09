@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "gen": "gql-gen --config graphql/codegen.ts",
-    "lint": "next lint",
+    "lint": "next lint --fix",
     "fmt": "prettier --write src/",
     "sb": "storybook dev -p 6006",
     "build-sb": "storybook build"
@@ -60,6 +60,7 @@
     "eslint": "8.54.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-next": "14.0.3",
+    "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.15",
     "eslint-plugin-unused-imports": "^3.0.0",
