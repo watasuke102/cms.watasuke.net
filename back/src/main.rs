@@ -24,7 +24,7 @@ impl Query {
       )),
     }
   }
-  async fn article(slug: String, context: &Context) -> juniper::FieldResult<Option<Article>> {
+  fn article(slug: String, context: &Context) -> juniper::FieldResult<Option<Article>> {
     let tags = tags::read_tags(&context.config.contents_path);
     let Ok(articles) = articles::read_articles(&context.config.contents_path, &tags) else {
       return Err(juniper::FieldError::new(
