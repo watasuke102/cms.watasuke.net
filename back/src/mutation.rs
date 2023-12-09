@@ -1,6 +1,9 @@
 use juniper::{graphql_object, graphql_value};
 
-use crate::{cms, Context};
+use crate::{
+  cms::{self, articles},
+  Context,
+};
 
 #[derive(Clone, Debug, Default)]
 pub struct Mutation;
@@ -16,26 +19,29 @@ impl Mutation {
   ) -> juniper::FieldResult<String> {
     let articles = {
       let tags = cms::tags::read_tags(&context.config.contents_path);
-      cms::articles::read_articles(&context.config.contents_path, &tags)
+      match cms::articles::read_articles(&context.config.contents_path, &tags) {
+        Ok(articles) => articles,
+        Err(err) => {
+          return Err(juniper::FieldError::new(
+            "read_articles() failed",
+            graphql_value!(err.to_string()),
+          ));
+        }
+      }
     };
-    let Ok(articles) = articles else {
-      return Err(juniper::FieldError::new(
-        "read_articles() failed",
-        graphql_value!({"internal_error": "Internal Server Error"}),
-      ));
-    };
+
     let Some(article) = articles.get(&slug) else {
       return Err(juniper::FieldError::new(
         "Article with such a slug not found",
-        graphql_value!({"internal_error": "Not Found"}),
+        graphql_value!("Not Found"),
       ));
     };
 
     match article.update(title, tags, is_favorite, body) {
       Ok(_) => Ok(slug),
-      Err(_) => Err(juniper::FieldError::new(
+      Err(err) => Err(juniper::FieldError::new(
         "article.update() failed",
-        graphql_value!({"internal_error": "Internal Server Error"}),
+        graphql_value!(err.to_string()),
       )),
     }
   }

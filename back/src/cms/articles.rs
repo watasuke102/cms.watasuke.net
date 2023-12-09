@@ -1,5 +1,4 @@
-use anyhow::anyhow;
-use chrono::{FixedOffset, Utc};
+use anyhow::bail;
 use juniper::graphql_object;
 use regex::Regex;
 use serde::Deserialize;
@@ -114,9 +113,7 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
   for year in article_years {
     let year = year?;
     if !year.metadata()?.is_dir() {
-      return Err(anyhow!(
-        "items under article folder must be a directory (named a year)"
-      ));
+      bail!("items under article folder must be a directory (named a year)");
     }
     let year_num = String::from(year.file_name().to_str().unwrap()).parse()?;
 
@@ -124,9 +121,7 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
     for article_dir in article_dirs {
       let article = article_dir?;
       if !article.metadata()?.is_dir() {
-        return Err(anyhow!(
-          "items under article/<year> folder must be a directory"
-        ));
+        bail!("items under article/<year> folder must be a directory");
       }
 
       let slug = {
@@ -138,7 +133,7 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
         String::from(slug.get(1).unwrap().as_str())
       };
       if articles.get(&slug).is_some() {
-        return Err(anyhow!("duplicated slug"));
+        bail!("duplicated slug");
       }
 
       let Ok(article_md) = std::fs::read_to_string(article.path().join("article.md")) else {

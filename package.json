@@ -10,6 +10,7 @@
     "dev": "next dev -p 10211",
     "build": "next build",
     "start": "next start",
+    "new": "scaffdog generate",
     "gen": "gql-gen --config graphql/codegen.ts",
     "lint": "next lint --fix",
     "fmt": "prettier --write src/",
@@ -66,6 +67,7 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "mini-css-extract-plugin": "^2.7.6",
     "prettier": "^3.1.0",
+    "scaffdog": "^3.0.0",
     "storybook": "^7.6.4",
     "style-loader": "^3.3.3"
   }
