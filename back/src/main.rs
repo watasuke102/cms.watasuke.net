@@ -1,7 +1,7 @@
 use std::{io::Write, path::Path};
 
 use articles::Article;
-use juniper::{graphql_object, EmptyMutation, EmptySubscription, RootNode};
+use juniper::{graphql_object, graphql_value, EmptyMutation, EmptySubscription, RootNode};
 use rocket::{response::content, State};
 type Schema = RootNode<'static, Query, EmptyMutation<Context>, EmptySubscription<Context>>;
 
@@ -14,35 +14,55 @@ mod tags;
 struct Query;
 #[graphql_object(context = crate::Context)]
 impl Query {
-  fn all_articles(context: &Context) -> Vec<&Article> {
-    context.articles.iter().map(|e| e.1).collect()
+  fn all_articles(context: &Context) -> juniper::FieldResult<Vec<Article>> {
+    let tags = tags::read_tags(&context.config.contents_path);
+    match articles::read_articles(&context.config.contents_path, &tags) {
+      Ok(articles) => Ok(articles.into_iter().map(|e| e.1).collect()),
+      Err(_) => Err(juniper::FieldError::new(
+        "read_articles() failed",
+        graphql_value!({"internal_error": "Internal Server Error"}),
+      )),
+    }
   }
-  fn article(slug: String, context: &Context) -> Option<&Article> {
-    context.articles.get(&slug)
+  async fn article(slug: String, context: &Context) -> juniper::FieldResult<Option<Article>> {
+    let tags = tags::read_tags(&context.config.contents_path);
+    let Ok(articles) = articles::read_articles(&context.config.contents_path, &tags) else {
+      return Err(juniper::FieldError::new(
+        "read_articles() failed",
+        graphql_value!({"internal_error": "Internal Server Error"}),
+      ));
+    };
+    match articles.get(&slug) {
+      Some(article) => Ok(Some(article.clone())),
+      None => Ok(None),
+    }
   }
-  fn all_tags(context: &Context) -> Vec<&tags::Tag> {
-    context.tags.iter().map(|e| e.1).collect()
+  fn all_tags(context: &Context) -> Vec<tags::Tag> {
+    tags::read_tags(&context.config.contents_path)
+      .into_iter()
+      .map(|e| e.1)
+      .collect()
   }
-  fn sitedata(context: &Context) -> &sitedata::Sitedata {
-    &context.sitedata
+  fn sitedata(context: &Context) -> juniper::FieldResult<sitedata::Sitedata> {
+    match sitedata::read_sitedata(&context.config.contents_path) {
+      Ok(sitedata) => Ok(sitedata),
+      Err(_) => Err(juniper::FieldError::new(
+        "read_sitedata() failed",
+        graphql_value!({"internal_error": "Internal Server Error"}),
+      )),
+    }
   }
 }
 
 #[derive(Clone, Debug)]
 pub struct Context {
-  articles: articles::Articles,
-  tags:     tags::Tags,
-  sitedata: sitedata::Sitedata,
+  config: config::Config,
 }
 impl juniper::Context for Context {}
 impl Context {
   fn new() -> anyhow::Result<Self> {
-    let config = config::Config::get();
-    let tags = tags::read_tags(&config.contents_path);
     Ok(Context {
-      articles: articles::read_articles(&config.contents_path, &tags)?,
-      tags:     tags,
-      sitedata: sitedata::read_sitedata(&config.contents_path)?,
+      config: config::Config::get(),
     })
   }
 }
@@ -76,7 +96,11 @@ async fn handle_img(
   img_name: &str,
   context: &State<Context>,
 ) -> Option<rocket::fs::NamedFile> {
-  let Some(article) = context.articles.get(slug) else {
+  let tags = tags::read_tags(&context.config.contents_path);
+  let Ok(articles) = articles::read_articles(&context.config.contents_path, &tags) else {
+    return None;
+  };
+  let Some(article) = articles.get(slug) else {
     return None;
   };
   let path = Path::new(article.article_path()).join(img_name);
