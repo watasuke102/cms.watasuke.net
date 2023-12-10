@@ -110,35 +110,49 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
   let re = Regex::new(r"^[0-9]{2}_([0-9a-z\-]+)")?;
   let mut articles: Articles = HashMap::new();
 
-  let article_years = std::fs::read_dir(Path::new(&contents_path).join("articles"))?;
-  for year in article_years {
-    let year = year?;
-    if !year.metadata()?.is_dir() {
-      bail!("items under article folder must be a directory (named a year)");
-    }
-    let year_num = String::from(year.file_name().to_str().unwrap()).parse()?;
+  let year_dirs = std::fs::read_dir(Path::new(&contents_path).join("articles"))?;
+  for year_dir in year_dirs {
+    let year_dir = year_dir?;
+    ensure!(
+      year_dir.metadata()?.is_dir(),
+      "{} is not directory; items under article folder must be a directory (named a year)",
+      year_dir.path().to_str().unwrap_or("")
+    );
+    let year_num = {
+      let year_str = String::from(year_dir.file_name().to_str().unwrap_or(""));
+      year_str.parse().with_context(|| {
+        format!("Failed to parse a folder name into number (name: '{year_str}')")
+      })?
+    };
 
-    let article_dirs = std::fs::read_dir(year.path())?;
+    let article_dirs = std::fs::read_dir(year_dir.path())?;
     for article_dir in article_dirs {
-      let article = article_dir?;
-      if !article.metadata()?.is_dir() {
-        bail!("items under article/<year> folder must be a directory");
-      }
+      let article_dir = article_dir?;
+      ensure!(
+        article_dir.metadata()?.is_dir(),
+        "{} is not directory; items under article/<year> folder must be a directory",
+        article_dir.path().to_str().unwrap_or("")
+      );
 
       let slug = {
-        let dirname = article.file_name();
+        let dirname = article_dir.file_name();
         let Some(slug) = re.captures(dirname.to_str().unwrap_or("")) else {
           // The article has not published yet (or invalid name)
           continue;
         };
         String::from(slug.get(1).unwrap().as_str())
       };
-      if articles.get(&slug).is_some() {
-        bail!("duplicated slug");
-      }
+      ensure!(
+        articles.get(&slug).is_none(),
+        "duplicated slug: {}",
+        article_dir.path().to_str().unwrap_or("")
+      );
 
-      let Ok(article_md) = std::fs::read_to_string(article.path().join("article.md")) else {
-        println!("{:?} doesn't have `article.md`; ignored", article.path());
+      let Ok(article_md) = std::fs::read_to_string(article_dir.path().join("article.md")) else {
+        println!(
+          "{:?} doesn't have `article.md`; ignored",
+          article_dir.path()
+        );
         continue;
       };
       let mut md: Document<Frontmatter> =
@@ -152,7 +166,7 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
       articles.insert(
         slug.clone(),
         Article {
-          article_path: String::from(article.path().to_str().unwrap()),
+          article_path: String::from(article_dir.path().to_str().unwrap()),
           slug,
           year: year_num,
           body: md.content,
