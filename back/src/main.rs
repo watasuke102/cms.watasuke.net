@@ -2,6 +2,7 @@ mod cms;
 mod config;
 mod mutation;
 mod query;
+mod util;
 
 use std::{io::Write, path::Path};
 

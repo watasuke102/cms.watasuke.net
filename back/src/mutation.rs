@@ -9,6 +9,15 @@ use crate::{
 pub struct Mutation;
 #[graphql_object(context = crate::Context)]
 impl Mutation {
+  fn new_article(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
+    match articles::create_article(&context.config.contents_path, &slug, &title) {
+      Ok(_) => Ok(slug),
+      Err(err) => Err(juniper::FieldError::new(
+        "create_article() failed",
+        graphql_value!(err.to_string()),
+      )),
+    }
+  }
   fn update_article(
     slug: String,
     title: String,

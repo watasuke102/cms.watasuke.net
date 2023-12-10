@@ -1,10 +1,12 @@
-use anyhow::bail;
+use anyhow::{bail, ensure, Context};
 use juniper::graphql_object;
 use regex::Regex;
 use serde::Deserialize;
-use std::collections::HashMap;
 use std::path::Path;
+use std::{collections::HashMap, io::ErrorKind};
 use yaml_front_matter::{Document, YamlFrontMatter};
+
+use crate::util;
 
 use super::tags;
 
@@ -59,13 +61,12 @@ impl Article {
     is_favorite: bool,
     body: String,
   ) -> anyhow::Result<()> {
-    let now = Utc::now().with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap());
     let frontmatter = Frontmatter {
       title,
       tags,
       is_favorite,
       published_at: self.frontmatter.published_at.clone(),
-      updated_at: now.format("%Y-%m-%dT%H:%M:%S").to_string(),
+      updated_at: util::now().format("%Y-%m-%dT%H:%M:%S").to_string(),
     };
 
     std::fs::write(
@@ -162,4 +163,37 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
     }
   }
   Ok(articles)
+}
+
+pub fn create_article(contents_path: &String, slug: &String, title: &String) -> anyhow::Result<()> {
+  let now = util::now();
+  let path = Path::new(contents_path)
+    .join("articles")
+    .join(now.format("%Y").to_string())
+    .join(format!("_{slug}"));
+  std::fs::create_dir_all(&path)?;
+
+  let frontmatter = Frontmatter {
+    title:        title.clone(),
+    tags:         Vec::new(),
+    is_favorite:  false,
+    published_at: "".to_string(),
+    updated_at:   now.format("%Y-%m-%dT%H:%M:%S").to_string(),
+  };
+
+  let path = path.join("article.md");
+  match std::fs::read(&path) {
+    Ok(_) => bail!("Already exists"),
+    Err(err) => {
+      if err.kind() != ErrorKind::NotFound {
+        bail!(
+          "An errror occurred while checking for existance of such a slug: {}",
+          err.to_string()
+        )
+      }
+    }
+  }
+  std::fs::write(path, format!("{}\n\n", frontmatter))?;
+
+  Ok(())
 }
