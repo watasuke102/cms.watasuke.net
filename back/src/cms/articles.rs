@@ -46,6 +46,7 @@ pub struct Article {
   slug:         String,
   body:         String,
   year:         i32,
+  index:        Option<i32>,
   tags:         Vec<tags::Tag>,
   frontmatter:  Frontmatter,
 }
@@ -76,6 +77,18 @@ impl Article {
 
     Ok(())
   }
+  fn year(&self) -> i32 {
+    self.year
+  }
+  pub fn index(&self) -> Option<i32> {
+    self.index
+  }
+  pub fn get_public_or_none(self) -> Option<Self> {
+    match self.index() {
+      Some(_) => Some(self),
+      None => None,
+    }
+  }
 }
 #[graphql_object(context = crate::Context)]
 impl Article {
@@ -84,9 +97,6 @@ impl Article {
   }
   fn body(&self) -> &str {
     &self.body
-  }
-  fn year(&self) -> i32 {
-    self.year
   }
   fn title(&self) -> &str {
     &self.frontmatter.title
@@ -107,7 +117,7 @@ impl Article {
 pub type Articles = HashMap<String, Article>;
 
 pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Result<Articles> {
-  let re = Regex::new(r"^[0-9]{2}_([0-9a-z\-]+)")?;
+  let re = Regex::new(r"^(?<index>[0-9]{2})?_(?<slug>[0-9a-z\-]+)")?;
   let mut articles: Articles = HashMap::new();
 
   let year_dirs = std::fs::read_dir(Path::new(&contents_path).join("articles"))?;
@@ -134,13 +144,17 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
         article_dir.path().to_str().unwrap_or("")
       );
 
-      let slug = {
+      let (index, slug) = {
         let dirname = article_dir.file_name();
         let Some(slug) = re.captures(dirname.to_str().unwrap_or("")) else {
           // The article has not published yet (or invalid name)
           continue;
         };
-        String::from(slug.get(1).unwrap().as_str())
+        let index = match slug.name("index") {
+          Some(index) => index.as_str().parse::<i32>().ok(),
+          None => None,
+        };
+        (index, String::from(slug.name("slug").unwrap().as_str()))
       };
       ensure!(
         articles.get(&slug).is_none(),
@@ -169,6 +183,7 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
           article_path: String::from(article_dir.path().to_str().unwrap()),
           slug,
           year: year_num,
+          index,
           body: md.content,
           tags: tags::convert_slug_vec(tags, &md.metadata.tags),
           frontmatter: md.metadata,

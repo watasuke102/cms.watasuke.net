@@ -12,7 +12,12 @@ impl Query {
   fn all_articles(context: &Context) -> juniper::FieldResult<Vec<articles::Article>> {
     let tags = tags::read_tags(&context.config.contents_path);
     match articles::read_articles(&context.config.contents_path, &tags) {
-      Ok(articles) => Ok(articles.into_iter().map(|e| e.1).collect()),
+      Ok(articles) => Ok(
+        articles
+          .into_iter()
+          .filter_map(|e| e.1.get_public_or_none())
+          .collect(),
+      ),
       Err(err) => Err(juniper::FieldError::new(
         "read_articles() failed",
         graphql_value!(err.to_string()),
@@ -31,7 +36,7 @@ impl Query {
       }
     };
     match articles.get(&slug) {
-      Some(article) => Ok(Some(article.clone())),
+      Some(article) => Ok(article.clone().get_public_or_none()),
       None => Ok(None),
     }
   }
