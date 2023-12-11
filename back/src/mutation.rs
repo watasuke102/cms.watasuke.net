@@ -10,6 +10,12 @@ pub struct Mutation;
 #[graphql_object(context = crate::Context)]
 impl Mutation {
   fn new_article(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
+    if !context.config.allow_private_access {
+      return Err(juniper::FieldError::new(
+        "Private access is forbidded",
+        graphql_value!(""),
+      ));
+    }
     match articles::create_article(&context.config.contents_path, &slug, &title) {
       Ok(_) => Ok(slug),
       Err(err) => Err(juniper::FieldError::new(
@@ -26,6 +32,12 @@ impl Mutation {
     body: String,
     context: &Context,
   ) -> juniper::FieldResult<String> {
+    if !context.config.allow_private_access {
+      return Err(juniper::FieldError::new(
+        "Private access is forbidded",
+        graphql_value!(""),
+      ));
+    }
     let articles = {
       let tags = cms::tags::read_tags(&context.config.contents_path);
       match cms::articles::read_articles(&context.config.contents_path, &tags) {
@@ -55,6 +67,12 @@ impl Mutation {
     }
   }
   fn publish_article(slug: String, context: &Context) -> juniper::FieldResult<String> {
+    if !context.config.allow_private_access {
+      return Err(juniper::FieldError::new(
+        "Private access is forbidded",
+        graphql_value!(""),
+      ));
+    }
     match articles::publish_article(&context.config.contents_path, &slug) {
       Ok(_) => Ok(slug),
       Err(err) => Err(juniper::FieldError::new(
