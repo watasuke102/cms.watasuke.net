@@ -22,7 +22,7 @@ questions:
 import React from 'react';
 import {css} from './{{ pascal(inputs.name) }}.css';
 
-export function {{ pascal(inputs.name) }}() {
+export function {{ pascal(inputs.name) }}(): JSX.Element {
   return(
     <></>
   );

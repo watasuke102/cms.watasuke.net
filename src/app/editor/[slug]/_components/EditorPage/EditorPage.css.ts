@@ -81,6 +81,7 @@ export const toast = {
   }),
   desc: style({
     gridArea: 'desc',
+    whiteSpace: 'pre-line',
   }),
   close: style({
     gridArea: 'close',

@@ -19,17 +19,10 @@ import CloseIcon from '@cms-assets/close.svg';
 import {css, toast} from './EditorPage.css';
 import {apiUrl} from '@config';
 import * as Toast from '@radix-ui/react-toast';
+import {QlError} from '@cms-types/QlError';
 
 type Props = {
   article: NonNullable<ArticleQuery['article']>;
-};
-
-type QlError = {
-  response: {
-    errors: {
-      message: string;
-    }[];
-  };
 };
 
 export default function EditorPage({article}: Props): JSX.Element {
@@ -48,8 +41,9 @@ export default function EditorPage({article}: Props): JSX.Element {
         body: body ?? '',
       });
       set_toast_status({title: 'success', desc: ''});
-    } catch (e) {
-      set_toast_status({title: 'fail', desc: (e as QlError).response.errors[0].message});
+    } catch (err) {
+      const error = (err as QlError).response.errors[0];
+      set_toast_status({title: error.message, desc: error.extensions});
     }
     set_is_toast_open(true);
   }, [article, body]);

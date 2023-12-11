@@ -8,10 +8,26 @@ import React from 'react';
 import {getSdk} from '@cms-utils/graphql';
 import {GraphQLClient} from 'graphql-request';
 import Link from 'next/link';
+import {QlError} from '@cms-types/QlError';
 
 export default async function Top(): Promise<JSX.Element> {
   const sdk = getSdk(new GraphQLClient('http://127.0.0.1:10212/graphql'));
-  const data = await sdk.allArticles();
+  let data;
+  try {
+    data = await sdk.allArticles();
+  } catch (err) {
+    const error = err as QlError;
+    return (
+      <>
+        {error.response.errors.map((e, i) => (
+          <p key={i}>
+            {e.message} <br />
+            {e.extensions}
+          </p>
+        ))}
+      </>
+    );
+  }
   return (
     <ul>
       {data.allArticles.map(e => {
