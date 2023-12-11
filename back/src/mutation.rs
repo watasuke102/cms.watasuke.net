@@ -54,4 +54,13 @@ impl Mutation {
       )),
     }
   }
+  fn publish_article(slug: String, context: &Context) -> juniper::FieldResult<String> {
+    match articles::publish_article(&context.config.contents_path, &slug) {
+      Ok(_) => Ok(slug),
+      Err(err) => Err(juniper::FieldError::new(
+        "publish_article() failed",
+        graphql_value!(err.to_string()),
+      )),
+    }
+  }
 }

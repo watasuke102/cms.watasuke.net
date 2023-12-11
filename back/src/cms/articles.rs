@@ -226,3 +226,38 @@ pub fn create_article(contents_path: &String, slug: &String, title: &String) -> 
 
   Ok(())
 }
+
+pub fn publish_article(contents_path: &String, slug: &String) -> anyhow::Result<()> {
+  let tags = tags::read_tags(&contents_path);
+  let articles = read_articles(contents_path, &tags)?;
+  let Some(article) = articles.get(slug) else {
+    bail!("Not found");
+  };
+  ensure!(
+    article.index.is_none(),
+    "Article has already been published"
+  );
+
+  let max_index = articles
+    .iter()
+    .filter_map(|e| {
+      if e.1.year == article.year {
+        e.1.index
+      } else {
+        None
+      }
+    })
+    .max()
+    .context("cannot find maximum index")?;
+
+  let path = Path::new(&article.article_path);
+  std::fs::rename(
+    &path,
+    path
+      .parent()
+      .context("parent does not exist")?
+      .join(format!("{:02}_{}", max_index + 1, slug)),
+  )?;
+
+  Ok(())
+}
