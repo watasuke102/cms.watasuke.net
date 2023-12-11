@@ -4,7 +4,8 @@ use serde::Deserialize;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct Config {
-  pub contents_path: String,
+  pub contents_path:        String,
+  pub allow_private_access: bool,
 }
 
 impl Config {

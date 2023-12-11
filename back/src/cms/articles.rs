@@ -77,9 +77,6 @@ impl Article {
 
     Ok(())
   }
-  fn year(&self) -> i32 {
-    self.year
-  }
   pub fn index(&self) -> Option<i32> {
     self.index
   }
