@@ -20,13 +20,19 @@ import {css, toast} from './EditorPage.css';
 import {apiUrl} from '@config';
 import * as Toast from '@radix-ui/react-toast';
 import {QlError} from '@cms-types/QlError';
+import {ReducerType, StateType, article_reducer} from '../ArticleReducer';
+import {useImmerReducer} from 'use-immer';
 
 type Props = {
   article: NonNullable<ArticleQuery['article']>;
 };
 
 export default function EditorPage({article}: Props): JSX.Element {
-  const [body, set_body] = React.useState<string | undefined>();
+  const [state, dispatch] = useImmerReducer(article_reducer, {
+    body: article.body,
+    title: article.title,
+    tags: article.tags.map(e => e.slug),
+  });
   const [toast_status, set_toast_status] = React.useState({title: 'success', desc: ''});
   const [is_toast_open, set_is_toast_open] = React.useState(false);
 
@@ -35,10 +41,10 @@ export default function EditorPage({article}: Props): JSX.Element {
       const sdk = getSdk(new GraphQLClient(`${apiUrl}/graphql`));
       await sdk.updateArticle({
         slug: article.slug,
-        title: article.title,
-        tags: article.tags.map(e => e.slug),
+        title: state.title,
+        tags: state.tags,
         isFavorite: false,
-        body: body ?? '',
+        body: state.body ?? '',
       });
       set_toast_status({title: 'success', desc: ''});
     } catch (err) {
@@ -46,11 +52,12 @@ export default function EditorPage({article}: Props): JSX.Element {
       set_toast_status({title: error.message, desc: error.extensions});
     }
     set_is_toast_open(true);
-  }, [article, body]);
+  }, [article, state]);
 
   // hydration errorが出るのを回避する
-  React.useEffect(() => set_body(article.body), []);
-  if (!body) {
+  const [is_first_render, set_is_first_render] = React.useState(true);
+  React.useEffect(() => set_is_first_render(false), []);
+  if (is_first_render) {
     return <Loading />;
   }
 
@@ -63,13 +70,13 @@ export default function EditorPage({article}: Props): JSX.Element {
         <span className={css.header_title}>{article.title}</span>
       </header>
       <section className={css.container}>
-        <MdEditor body={body} set_body={set_body} save={save} />
+        <MdEditor state={state} dispatcher={dispatch} save={save} />
         <div className={css.preview}>
           <BlogContent
             data={{
               slug: article.slug,
-              title: article.title,
-              body: body,
+              title: state.title,
+              body: state.body,
               tags: article.tags,
               published_at: article.publishedAt,
               updated_at: article.updatedAt,
