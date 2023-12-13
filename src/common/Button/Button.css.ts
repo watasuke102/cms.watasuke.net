@@ -13,17 +13,22 @@ const common: ComplexStyleRule = {
   borderRadius: 2,
   border: 'none',
   display: 'grid',
+  whiteSpace: 'nowrap',
   gridTemplateColumns: 'auto 1fr',
-  transitionProperty: 'color, background-color',
-  transitionDuration: '0.2s',
-  ':hover': {
-    backgroundColor: `${color.p0}44`,
-    transitionProperty: 'color, background-color',
-    transitionDuration: '0.2s',
-  },
 };
 
 export const css = {
+  enabled: style({
+    transitionProperty: 'color, background-color',
+    transitionDuration: '0.2s',
+    ':hover': {
+      transitionProperty: 'color, background-color',
+      transitionDuration: '0.2s',
+    },
+  }),
+  disabled: style({
+    opacity: 0.8,
+  }),
   icon: style({
     aspectRatio: '1 / 1',
     height: '100%',
@@ -33,22 +38,38 @@ export const css = {
     gridColumn: '2 / 3',
     fontSize: '1.1rem',
     fontWeight: 'bold',
+    margin: 'auto',
   }),
   button_text: style({
     ...common,
     color: color.p0,
+    ':hover': {
+      backgroundColor: `${color.p0}44`,
+    },
+    ':disabled': {
+      backgroundColor: 'inherit',
+    },
   }),
   button_outlined: style({
     ...common,
     color: color.p0,
     border: `2px solid ${color.p0}`,
+    ':hover': {
+      backgroundColor: `${color.p0}44`,
+    },
+    ':disabled': {
+      backgroundColor: 'inherit',
+    },
   }),
   button_contained: style({
     ...common,
     color: color.bg,
     backgroundColor: color.p0,
     ':hover': {
-      color: `${color.bg}88`,
+      backgroundColor: `${color.p0}bb`,
+    },
+    ':disabled': {
+      backgroundColor: color.p0,
     },
   }),
 };

@@ -21,6 +21,7 @@ export const Text: StoryObj<typeof Button> = {
   args: {
     type: 'text',
     text: 'Button',
+    disabled: false,
   },
 };
 
@@ -28,6 +29,7 @@ export const Outlined: StoryObj<typeof Button> = {
   args: {
     type: 'outlined',
     text: 'Button',
+    disabled: false,
   },
 };
 
@@ -35,5 +37,6 @@ export const Contained: StoryObj<typeof Button> = {
   args: {
     type: 'contained',
     text: 'Button',
+    disabled: false,
   },
 };

@@ -12,6 +12,7 @@ type Props = {
   text?: string;
   icon?: JSX.Element;
   aria_label: string;
+  disabled?: boolean;
   on_click: () => void;
 };
 
@@ -27,7 +28,12 @@ export function Button(props: Props): JSX.Element {
     }
   })();
   return (
-    <button className={class_name} onClick={props.on_click} aria-label={props.aria_label}>
+    <button
+      className={`${props.disabled ? css.disabled : css.enabled} ${class_name}`}
+      disabled={props.disabled}
+      onClick={props.on_click}
+      aria-label={props.aria_label}
+    >
       <div className={css.icon}>{props.icon}</div>
       <span className={css.text}>{props.text}</span>
     </button>
