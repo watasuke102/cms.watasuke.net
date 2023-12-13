@@ -77,13 +77,11 @@ impl Article {
 
     Ok(())
   }
-  pub fn index(&self) -> Option<i32> {
-    self.index
-  }
   pub fn get_public_or_none(self) -> Option<Self> {
-    match self.index() {
-      Some(_) => Some(self),
-      None => None,
+    if self.is_published() {
+      Some(self)
+    } else {
+      None
     }
   }
 }
@@ -109,6 +107,9 @@ impl Article {
   }
   fn updated_at(&self) -> &str {
     &self.frontmatter.updated_at
+  }
+  fn is_published(&self) -> bool {
+    self.index.is_some()
   }
 }
 pub type Articles = HashMap<String, Article>;

@@ -13,6 +13,7 @@ import SaveIcon from '@cms-assets/save.svg';
 import * as ArticleReducer from '../ArticleReducer';
 
 type Props = {
+  is_published: boolean;
   state: ArticleReducer.StateType;
   dispatcher: React.Dispatch<ArticleReducer.Action>;
   save: () => void;

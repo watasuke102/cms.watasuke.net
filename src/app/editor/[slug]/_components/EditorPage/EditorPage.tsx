@@ -70,7 +70,7 @@ export default function EditorPage({article}: Props): JSX.Element {
         <span className={css.header_title}>{article.title}</span>
       </header>
       <section className={css.container}>
-        <MdEditor state={state} dispatcher={dispatch} save={save} />
+        <MdEditor is_published={article.isPublished} state={state} dispatcher={dispatch} save={save} />
         <div className={css.preview}>
           <BlogContent
             data={{

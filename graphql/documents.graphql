@@ -17,6 +17,8 @@ query article($slug: String!) {
     title
     publishedAt
     updatedAt
+    isFavorite
+    isPublished
     tags {
       slug
       name
