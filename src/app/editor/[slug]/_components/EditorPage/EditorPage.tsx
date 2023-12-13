@@ -20,7 +20,7 @@ import {css, toast} from './EditorPage.css';
 import {apiUrl} from '@config';
 import * as Toast from '@radix-ui/react-toast';
 import {QlError} from '@cms-types/QlError';
-import {ReducerType, StateType, article_reducer} from '../ArticleReducer';
+import {article_reducer} from '../ArticleReducer';
 import {useImmerReducer} from 'use-immer';
 
 type Props = {
@@ -67,7 +67,7 @@ export default function EditorPage({article}: Props): JSX.Element {
         <Link href='/' className={css.back_button}>
           <LeftIcon />
         </Link>
-        <span className={css.header_title}>{article.title}</span>
+        <span className={css.header_title}>{state.title}</span>
       </header>
       <section className={css.container}>
         <MdEditor is_published={article.isPublished} state={state} dispatcher={dispatch} save={save} />

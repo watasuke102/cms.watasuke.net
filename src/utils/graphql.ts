@@ -21,17 +21,30 @@ export type Article = {
   __typename?: 'Article';
   body: Scalars['String']['output'];
   isFavorite: Scalars['Boolean']['output'];
+  isPublished: Scalars['Boolean']['output'];
   publishedAt: Scalars['String']['output'];
   slug: Scalars['String']['output'];
   tags: Array<Tag>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
-  year: Scalars['Int']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  newArticle: Scalars['String']['output'];
+  publishArticle: Scalars['String']['output'];
   updateArticle: Scalars['String']['output'];
+};
+
+
+export type MutationNewArticleArgs = {
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationPublishArticleArgs = {
+  slug: Scalars['String']['input'];
 };
 
 
@@ -46,6 +59,7 @@ export type MutationUpdateArticleArgs = {
 export type Query = {
   __typename?: 'Query';
   allArticles: Array<Article>;
+  allPublicArticles: Array<Article>;
   allTags: Array<Tag>;
   article?: Maybe<Article>;
   sitedata: Sitedata;
@@ -78,7 +92,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
+export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, isFavorite: boolean, isPublished: boolean, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
 
 export type UpdateArticleMutationVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -107,6 +121,8 @@ export const ArticleDocument = gql`
     title
     publishedAt
     updatedAt
+    isFavorite
+    isPublished
     tags {
       slug
       name

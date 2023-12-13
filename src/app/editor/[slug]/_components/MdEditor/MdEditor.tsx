@@ -10,7 +10,9 @@ import React from 'react';
 import {css} from './MdEditor.css';
 import {Button} from '@cms-common/Button';
 import SaveIcon from '@cms-assets/save.svg';
+import ExpandIcon from '@cms-assets/expand.svg';
 import * as ArticleReducer from '../ArticleReducer';
+import * as Accordion from '@radix-ui/react-accordion';
 
 type Props = {
   is_published: boolean;
@@ -20,12 +22,47 @@ type Props = {
 };
 
 export default function MdEditor(props: Props): JSX.Element {
+  const [accordion_value, set_accordion_value] = React.useState('');
   return (
     <div className={css.editor}>
-      <div className={css.toolbox}>
-        <Button type='outlined' text='published' aria_label='publish' on_click={() => undefined} />
-        <Button type='contained' text='save <C-s>' icon={<SaveIcon />} aria_label='save' on_click={props.save} />
-      </div>
+      <Accordion.Root
+        className={css.toolbox}
+        type='single'
+        collapsible
+        value={accordion_value}
+        onValueChange={set_accordion_value}
+      >
+        <Accordion.Item value='title_editor'>
+          <Accordion.Header asChild>
+            <div className={css.toolbox_header}>
+              <Accordion.Trigger asChild>
+                <div className={css.expand_icon}>
+                  <ExpandIcon />
+                </div>
+              </Accordion.Trigger>
+              <Button
+                type='outlined'
+                text={props.is_published ? 'published' : 'publish'}
+                aria_label='publish'
+                on_click={() => undefined}
+                disabled={props.is_published}
+              />
+              <Button type='contained' text='save <C-s>' icon={<SaveIcon />} aria_label='save' on_click={props.save} />
+            </div>
+          </Accordion.Header>
+          <Accordion.Content className={css.accordion_content}>
+            <div className={css.title_editor}>
+              <label>Title</label>
+              <input
+                type='text'
+                value={props.state.title}
+                onChange={e => props.dispatcher({type: 'title/update', data: e.target.value})}
+                className={css.input_text}
+              />
+            </div>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion.Root>
       <textarea
         className={css.textarea}
         value={props.state.body}
