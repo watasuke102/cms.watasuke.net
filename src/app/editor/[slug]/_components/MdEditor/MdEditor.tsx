@@ -13,6 +13,7 @@ import SaveIcon from '@cms-assets/save.svg';
 import ExpandIcon from '@cms-assets/expand.svg';
 import * as ArticleReducer from '../ArticleReducer';
 import * as Accordion from '@radix-ui/react-accordion';
+import {useShortcut} from '@cms-common/useShortcut/useShortcut';
 
 type Props = {
   is_published: boolean;
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function MdEditor(props: Props): JSX.Element {
+  useShortcut([{keycode: 'KeyS', handler: props.save_button_handler}], {ctrl: true});
   const [accordion_value, set_accordion_value] = React.useState('');
   return (
     <div className={css.editor}>
