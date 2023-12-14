@@ -70,6 +70,7 @@ export { {{ pascal(inputs.name) }} };
 // Email  : <watasuke102@gmail.com>
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
+import React from 'react';
 import type {Meta, StoryObj} from '@storybook/react';
 import '@watasuke.net/components/common/main.css';
 import '@cms-common/global.css';
@@ -83,7 +84,7 @@ const meta: Meta<typeof {{ pascal(inputs.name) }}> = {
 };
 export default meta;
 
-export const main: StoryObj<typeof {{ pascal(inputs.name) }}> = {
+export const Main: StoryObj<typeof {{ pascal(inputs.name) }}> = {
   render: () => <{{ pascal(inputs.name) }} />,
 };
 
