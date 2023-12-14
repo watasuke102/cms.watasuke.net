@@ -47,7 +47,7 @@ fn post_graphql_handler(
 }
 
 #[rocket::get("/img/<slug>/<img_name>")]
-async fn handle_img(
+async fn handle_get_img(
   slug: &str,
   img_name: &str,
   context: &State<Context>,
@@ -61,6 +61,50 @@ async fn handle_img(
   };
   let path = Path::new(article.article_path()).join(img_name);
   rocket::fs::NamedFile::open(path).await.ok()
+}
+
+async fn save_img(
+  slug: &str,
+  img_name: &str,
+  context: &State<Context>,
+  file: rocket::fs::TempFile<'_>,
+) -> rocket::http::Status {
+  if !context.config.allow_private_access {
+    return rocket::http::Status::Forbidden;
+  }
+  let tags = cms::tags::read_tags(&context.config.contents_path);
+  let Ok(articles) = cms::articles::read_articles(&context.config.contents_path, &tags) else {
+    return rocket::http::Status::InternalServerError;
+  };
+  let Some(article) = articles.get(slug) else {
+    return rocket::http::Status::NotFound;
+  };
+
+  match file
+    .persist_to(Path::new(article.article_path()).join(img_name))
+    .await
+  {
+    Ok(_) => rocket::http::Status::Ok,
+    Err(_) => rocket::http::Status::InternalServerError,
+  }
+}
+#[rocket::post("/img/<slug>/<img_name>", format = "image/png", data = "<file>")]
+async fn handle_post_png(
+  slug: &str,
+  img_name: &str,
+  context: &State<Context>,
+  file: rocket::fs::TempFile<'_>,
+) -> rocket::http::Status {
+  save_img(slug, img_name, context, file).await
+}
+#[rocket::post("/img/<slug>/<img_name>", format = "image/jpeg", data = "<file>")]
+async fn handle_post_jpeg(
+  slug: &str,
+  img_name: &str,
+  context: &State<Context>,
+  file: rocket::fs::TempFile<'_>,
+) -> rocket::http::Status {
+  save_img(slug, img_name, context, file).await
 }
 
 #[rocket::main]
@@ -88,7 +132,9 @@ async fn main() -> anyhow::Result<()> {
         graphiql,
         get_graphql_handler,
         post_graphql_handler,
-        handle_img
+        handle_get_img,
+        handle_post_png,
+        handle_post_jpeg,
       ],
     )
     .launch()
