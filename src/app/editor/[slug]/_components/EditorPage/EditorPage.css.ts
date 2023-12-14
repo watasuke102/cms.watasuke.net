@@ -34,13 +34,14 @@ export const css = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     height: 'calc(100dvh - 56px - 24px)',
-    border: `2px solid ${color.fg}`,
     borderRadius: 4,
     borderTopLeftRadius: 0,
   }),
   preview: style({
     padding: '8px 16px',
     overflowY: 'scroll',
+    border: `2px solid ${color.fg}`,
+    borderLeft: 'none',
   }),
 };
 
@@ -100,7 +101,7 @@ const closed = keyframes({
 globalStyle(`${toast.root}[data-state='open']`, {
   animationName: open,
 });
-globalStyle(`${toast.root}[data-state='closed']`, {
+globalStyle(`${toast.root}[data-state='closed' && data-swipe!='end']`, {
   animationName: closed,
 });
 globalStyle(`${toast.root}[data-swipe='move']`, {
