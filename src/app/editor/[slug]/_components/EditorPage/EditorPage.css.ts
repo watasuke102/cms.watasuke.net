@@ -91,17 +91,17 @@ export const toast = {
 };
 
 const open = keyframes({
-  '0%': {transform: 'translateY(-120%)'},
+  '0%': {transform: 'translateY(-128%)'},
   '100%': {transform: 'translateY(0%)'},
 });
 const closed = keyframes({
   '0%': {transform: 'translateY(0%)'},
-  '100%': {transform: 'translateY(-120%)'},
+  '100%': {transform: 'translateY(-128%)'},
 });
 globalStyle(`${toast.root}[data-state='open']`, {
   animationName: open,
 });
-globalStyle(`${toast.root}[data-state='closed' && data-swipe!='end']`, {
+globalStyle(`${toast.root}[data-state='closed']:not([data-swipe='end'])`, {
   animationName: closed,
 });
 globalStyle(`${toast.root}[data-swipe='move']`, {
