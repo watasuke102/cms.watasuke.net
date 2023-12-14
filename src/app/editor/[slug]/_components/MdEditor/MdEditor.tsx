@@ -18,7 +18,8 @@ type Props = {
   is_published: boolean;
   state: ArticleReducer.StateType;
   dispatcher: React.Dispatch<ArticleReducer.Action>;
-  save: () => void;
+  save_button_handler: () => void;
+  publish_button_handler: () => void;
 };
 
 export default function MdEditor(props: Props): JSX.Element {
@@ -44,10 +45,16 @@ export default function MdEditor(props: Props): JSX.Element {
                 type='outlined'
                 text={props.is_published ? 'published' : 'publish'}
                 aria_label='publish'
-                on_click={() => undefined}
+                on_click={props.publish_button_handler}
                 disabled={props.is_published}
               />
-              <Button type='contained' text='save <C-s>' icon={<SaveIcon />} aria_label='save' on_click={props.save} />
+              <Button
+                type='contained'
+                text='save <C-s>'
+                icon={<SaveIcon />}
+                aria_label='save'
+                on_click={props.save_button_handler}
+              />
             </div>
           </Accordion.Header>
           <Accordion.Content className={css.accordion_content}>

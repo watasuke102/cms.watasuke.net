@@ -30,3 +30,7 @@ query article($slug: String!) {
 mutation updateArticle($slug: String!, $title: String!, $tags: [String!]!, $isFavorite: Boolean!, $body: String!) {
   updateArticle(slug: $slug, title: $title, tags: $tags, isFavorite: $isFavorite, body: $body)
 }
+
+mutation publishArticle($slug: String!) {
+  publishArticle(slug: $slug)
+}

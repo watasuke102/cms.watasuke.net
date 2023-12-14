@@ -22,6 +22,8 @@ import * as Toast from '@radix-ui/react-toast';
 import {QlError} from '@cms-types/QlError';
 import {article_reducer} from '../ArticleReducer';
 import {useImmerReducer} from 'use-immer';
+import {Dialog} from '@cms-common/Dialog';
+import {Button} from '@cms-common/Button';
 
 type Props = {
   article: NonNullable<ArticleQuery['article']>;
@@ -33,8 +35,10 @@ export default function EditorPage({article}: Props): JSX.Element {
     title: article.title,
     tags: article.tags.map(e => e.slug),
   });
+  const [is_published, set_is_published] = React.useState(article.isPublished);
   const [toast_status, set_toast_status] = React.useState({title: 'success', desc: ''});
   const [is_toast_open, set_is_toast_open] = React.useState(false);
+  const [is_dialog_open, set_is_dialog_open] = React.useState(false);
 
   const save = React.useCallback(async () => {
     try {
@@ -54,6 +58,22 @@ export default function EditorPage({article}: Props): JSX.Element {
     set_is_toast_open(true);
   }, [article, state]);
 
+  const publish = React.useCallback(async () => {
+    if (is_published) {
+      return;
+    }
+    try {
+      const sdk = getSdk(new GraphQLClient(`${apiUrl}/graphql`));
+      await sdk.publishArticle({slug: article.slug});
+      set_is_published(true);
+      set_toast_status({title: 'success', desc: ''});
+    } catch (err) {
+      const error = (err as QlError).response.errors[0];
+      set_toast_status({title: error.message, desc: error.extensions});
+    }
+    set_is_toast_open(true);
+  }, [is_published]);
+
   // hydration errorが出るのを回避する
   const [is_first_render, set_is_first_render] = React.useState(true);
   React.useEffect(() => set_is_first_render(false), []);
@@ -70,7 +90,13 @@ export default function EditorPage({article}: Props): JSX.Element {
         <span className={css.header_title}>{state.title}</span>
       </header>
       <section className={css.container}>
-        <MdEditor is_published={article.isPublished} state={state} dispatcher={dispatch} save={save} />
+        <MdEditor
+          is_published={is_published}
+          state={state}
+          dispatcher={dispatch}
+          publish_button_handler={() => set_is_dialog_open(true)}
+          save_button_handler={save}
+        />
         <div className={css.preview}>
           <BlogContent
             data={{
@@ -95,6 +121,23 @@ export default function EditorPage({article}: Props): JSX.Element {
         </Toast.Root>
         <Toast.Viewport className={toast.viewpoint} />
       </Toast.Provider>
+
+      <Dialog
+        is_open={is_dialog_open}
+        set_is_open={set_is_dialog_open}
+        title='Are you sure to publish?'
+        desc='You cannot undo this change from the CMS (yet)'
+      >
+        <Button
+          type='contained'
+          text='Publish'
+          aria_label='publish'
+          on_click={() => {
+            set_is_dialog_open(false);
+            publish();
+          }}
+        />
+      </Dialog>
     </>
   );
 }

@@ -105,6 +105,13 @@ export type UpdateArticleMutationVariables = Exact<{
 
 export type UpdateArticleMutation = { __typename?: 'Mutation', updateArticle: string };
 
+export type PublishArticleMutationVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type PublishArticleMutation = { __typename?: 'Mutation', publishArticle: string };
+
 
 export const AllArticlesDocument = gql`
     query allArticles {
@@ -142,6 +149,11 @@ export const UpdateArticleDocument = gql`
   )
 }
     `;
+export const PublishArticleDocument = gql`
+    mutation publishArticle($slug: String!) {
+  publishArticle(slug: $slug)
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -158,6 +170,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     updateArticle(variables: UpdateArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateArticleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateArticleMutation>(UpdateArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateArticle', 'mutation');
+    },
+    publishArticle(variables: PublishArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<PublishArticleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PublishArticleMutation>(PublishArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'publishArticle', 'mutation');
     }
   };
 }
