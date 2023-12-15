@@ -21,7 +21,7 @@ export const css = {
   }),
   toolbox_header: style({
     display: 'grid',
-    gridTemplateColumns: '32px 100px 1fr',
+    gridTemplateColumns: '32px 100px auto 1fr',
     width: '100%',
     gap: 12,
   }),
