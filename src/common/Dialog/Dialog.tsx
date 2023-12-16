@@ -26,8 +26,8 @@ export function Dialog(props: Props): JSX.Element {
         <RDialog.Overlay className={css.overlay}>
           <RDialog.Content className={css.content} onCloseAutoFocus={props.on_close}>
             <div className={css.header}>
-              <RDialog.Title>{props.title}</RDialog.Title>
-              <RDialog.Close className={css.close_button}>
+              <RDialog.Title className={css.title}>{props.title}</RDialog.Title>
+              <RDialog.Close className={css.close_button} asChild>
                 <CloseIcon />
               </RDialog.Close>
             </div>

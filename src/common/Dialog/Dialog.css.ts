@@ -32,8 +32,13 @@ export const css = {
     backgroundColor: color.g0,
   }),
   header: style({
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
     gap: 8,
+    marginBottom: 4,
+  }),
+  title: style({
+    margin: 0,
   }),
   close_button: style({
     aspectRatio: '1 / 1',
@@ -44,6 +49,6 @@ export const css = {
 };
 
 globalStyle(`${css.close_button} svg`, {
-  width: '100%',
+  // width: '100%',
   height: '100%',
 });
