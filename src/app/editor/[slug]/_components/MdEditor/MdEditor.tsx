@@ -33,19 +33,31 @@ export default function MdEditor(props: Props): JSX.Element {
   const insert_image_name = React.useCallback(
     (file_name: string) => {
       const cursor_pos = textarea_ref.current?.selectionStart ?? 0;
+      /* ideal: blank lines exist both before and after the image like this:
+          <...before>
+
+          ![alt](path)
+
+          <after...>
+        it means: <before>\n\n<image>\n\n<after>
+      */
       let new_body = '';
-      if (cursor_pos !== 0) {
+      if (props.state.body[cursor_pos - 2] && props.state.body[cursor_pos - 2] !== '\n') {
         new_body += '\n';
-        if (props.state.body[cursor_pos - 1] !== '\n') {
-          new_body += '\n';
-        }
       }
-      new_body += `![](/img/${file_name})\n`;
-      if (props.state.body[cursor_pos] !== '\n' && props.state.body[cursor_pos + 1] !== '\n') {
+      if (props.state.body[cursor_pos - 1] && props.state.body[cursor_pos - 1] !== '\n') {
+        new_body += '\n';
+      }
+      new_body += `![](/img/${file_name})`;
+      if (props.state.body[cursor_pos] !== '\n') {
+        new_body += '\n';
+      }
+      if (props.state.body[cursor_pos + 1] !== '\n') {
         new_body += '\n';
       }
       // copy is to may fail due to the browser permission, so ignore any exceptions
       navigator.clipboard?.writeText(new_body).catch(() => undefined);
+
       textarea_ref.current?.focus();
     },
     [textarea_ref],
