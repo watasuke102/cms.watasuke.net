@@ -16,6 +16,7 @@ type Props = {
   children: React.ReactNode;
   is_open: boolean;
   set_is_open: (s: boolean) => void;
+  on_close?: () => void;
 };
 
 export function Dialog(props: Props): JSX.Element {
@@ -23,7 +24,7 @@ export function Dialog(props: Props): JSX.Element {
     <RDialog.Root open={props.is_open} onOpenChange={props.set_is_open}>
       <RDialog.Portal>
         <RDialog.Overlay className={css.overlay}>
-          <RDialog.Content className={css.content}>
+          <RDialog.Content className={css.content} onCloseAutoFocus={props.on_close}>
             <div className={css.header}>
               <RDialog.Title>{props.title}</RDialog.Title>
               <RDialog.Close className={css.close_button}>

@@ -29,7 +29,7 @@ type Props = {
 
 export default function MdEditor(props: Props): JSX.Element {
   useShortcut([{keycode: 'KeyS', handler: props.save_button_handler}], {ctrl: true});
-  const textarea_ref = React.createRef<HTMLTextAreaElement>();
+  const textarea_ref = React.useRef<HTMLTextAreaElement | null>();
   const insert_image_name = React.useCallback(
     (file_name: string) => {
       const cursor_pos = textarea_ref.current?.selectionStart ?? 0;
@@ -57,8 +57,6 @@ export default function MdEditor(props: Props): JSX.Element {
       }
       // copy is to may fail due to the browser permission, so ignore any exceptions
       navigator.clipboard?.writeText(new_body).catch(() => undefined);
-
-      textarea_ref.current?.focus();
     },
     [textarea_ref],
   );
@@ -122,7 +120,7 @@ export default function MdEditor(props: Props): JSX.Element {
         </Accordion.Root>
         <textarea
           className={css.textarea}
-          ref={textarea_ref}
+          ref={r => (textarea_ref.current = r)}
           value={props.state.body}
           onChange={e => {
             props.dispatcher({
@@ -137,6 +135,7 @@ export default function MdEditor(props: Props): JSX.Element {
         desc='You can upload only png or jpeg'
         is_open={is_img_uploader_open}
         set_is_open={set_is_img_uploader_open}
+        on_close={() => textarea_ref.current?.focus()}
       >
         <ImageUploader
           slug={props.slug}
