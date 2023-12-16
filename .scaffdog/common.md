@@ -1,8 +1,8 @@
 ---
 name: 'common'
-root: './src/common'
+root: './src'
 output: '**'
-ignore: ['src/pages/**']
+ignore: []
 questions:
   name: 'name: '
   is_storybook_required:

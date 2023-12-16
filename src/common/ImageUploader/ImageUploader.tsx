@@ -17,22 +17,22 @@ type Props = {
 
 export function ImageUploader(props: Props): JSX.Element {
   const handle_drop = React.useCallback((files: FileWithPath[]) => {
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        axios
-          .post(`${apiUrl}/img/${props.slug}/${file.name}`, reader.result, {
-            headers: {
-              'Content-Type': file.type,
-            },
-          })
-          .then(() => props.on_complete(file.name));
-      };
-      reader.readAsArrayBuffer(file);
-    });
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = async () => {
+      axios
+        .post(`${apiUrl}/img/${props.slug}/${file.name}`, reader.result, {
+          headers: {
+            'Content-Type': file.type,
+          },
+        })
+        .then(() => props.on_complete(file.name));
+    };
+    reader.readAsArrayBuffer(file);
   }, []);
   const {getRootProps, getInputProps, isDragActive} = useDropzone({
     onDrop: handle_drop,
+    multiple: false,
     accept: {
       'image/png': [],
       'image/jpeg': [],

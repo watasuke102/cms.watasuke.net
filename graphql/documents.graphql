@@ -8,6 +8,9 @@ query allArticles {
   allArticles {
     slug
     title
+    publishedAt
+    updatedAt
+    isPublished
   }
 }
 

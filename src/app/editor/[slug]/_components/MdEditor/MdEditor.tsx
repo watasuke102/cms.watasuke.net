@@ -61,6 +61,7 @@ export default function MdEditor(props: Props): JSX.Element {
     [textarea_ref],
   );
 
+  // FIXME: collapsible is enough
   const [accordion_value, set_accordion_value] = React.useState('');
   const [is_img_uploader_open, set_is_img_uploader_open] = React.useState(false);
 

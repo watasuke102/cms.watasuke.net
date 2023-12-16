@@ -2,7 +2,7 @@
 title: 'not published'
 tags: []
 is_favorite: false
-published_at: '2023-10-30T00:00:00'
+published_at: ''
 updated_at: '2023-10-30T00:12:00'
 ---
 
