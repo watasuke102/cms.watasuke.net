@@ -7,8 +7,7 @@
 import React from 'react';
 import {useDropzone, FileWithPath} from 'react-dropzone';
 import {css} from './ImageUploader.css';
-import axios from 'axios';
-import {apiUrl} from '@config';
+import {upload_new_image} from '@cms-utils/api';
 
 type Props = {
   slug: string;
@@ -20,13 +19,10 @@ export function ImageUploader(props: Props): JSX.Element {
     const file = files[0];
     const reader = new FileReader();
     reader.onload = async () => {
-      axios
-        .post(`${apiUrl}/img/${props.slug}/${file.name}`, reader.result, {
-          headers: {
-            'Content-Type': file.type,
-          },
-        })
-        .then(() => props.on_complete(file.name));
+      if (reader.result instanceof ArrayBuffer) {
+        await upload_new_image(props.slug, file.name, file.type, reader.result);
+        props.on_complete(file.name);
+      }
     };
     reader.readAsArrayBuffer(file);
   }, []);
