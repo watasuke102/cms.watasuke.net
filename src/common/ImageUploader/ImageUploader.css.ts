@@ -9,6 +9,7 @@ import {color} from '@watasuke.net/components/common/color';
 
 export const css = {
   upload_area: style({
+    outline: '32px solid transparent',
     display: 'flex',
     flexDirection: 'column',
     border: '3px solid',
@@ -27,5 +28,41 @@ export const css = {
   dnd_prompt: style({
     fontSize: '1.3em',
     fontWeight: 'bold',
+  }),
+  image_info_editor: style({
+    maxWidth: '85dvw',
+    display: 'grid',
+    gridTemplateColumns: '1fr auto auto',
+    gridTemplateRows: '1fr auto',
+    gridTemplateAreas: `
+    'img label warn'
+    'img input input'
+    `,
+    alignItems: 'end',
+    gap: '0 20px',
+  }),
+  img: style({
+    gridArea: 'img',
+    margin: 'auto',
+    padding: 4,
+    border: `3px dotted ${color.fg}`,
+  }),
+  label: style({
+    gridArea: 'label',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+  }),
+  input: style({
+    gridArea: 'input',
+    border: `1px solid ${color.fg}`,
+    ':focus-visible': {
+      outline: 'none',
+    },
+  }),
+  buttons: style({
+    display: 'grid',
+    gridTemplateRows: '40px 32px',
+    gap: 4,
+    marginTop: 12,
   }),
 };
