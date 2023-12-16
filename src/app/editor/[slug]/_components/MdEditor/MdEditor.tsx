@@ -32,12 +32,8 @@ export default function MdEditor(props: Props): JSX.Element {
   const textarea_ref = React.createRef<HTMLTextAreaElement>();
   const insert_image_name = React.useCallback(
     (file_name: string) => {
-      if (!textarea_ref.current) {
-        return;
-      }
-      const cursor_pos = textarea_ref.current.selectionStart ?? 0;
-      // body before the cursor
-      let new_body = props.state.body.slice(0, cursor_pos);
+      const cursor_pos = textarea_ref.current?.selectionStart ?? 0;
+      let new_body = '';
       if (cursor_pos !== 0) {
         new_body += '\n';
         if (props.state.body[cursor_pos - 1] !== '\n') {
@@ -48,13 +44,9 @@ export default function MdEditor(props: Props): JSX.Element {
       if (props.state.body[cursor_pos] !== '\n' && props.state.body[cursor_pos + 1] !== '\n') {
         new_body += '\n';
       }
-      // body after the cursor
-      new_body += props.state.body.slice(cursor_pos);
-      // data: new_body,
-      props.dispatcher({
-        type: 'body/update',
-        data: new_body,
-      });
+      // copy is to may fail due to the browser permission, so ignore any exceptions
+      navigator.clipboard?.writeText(new_body).catch(() => undefined);
+      textarea_ref.current?.focus();
     },
     [textarea_ref],
   );
