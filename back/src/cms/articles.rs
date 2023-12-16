@@ -208,6 +208,12 @@ pub fn read_articles(contents_path: &String, tags: &tags::Tags) -> anyhow::Resul
 }
 
 pub fn create_article(contents_path: &String, slug: &String, title: &String) -> anyhow::Result<()> {
+  {
+    let tags = tags::read_tags(contents_path);
+    let articles = read_articles(contents_path, &tags)?;
+    ensure!(articles.get(slug).is_none(), "already exists");
+  }
+
   let now = util::now();
   let path = Path::new(contents_path)
     .join("articles")
@@ -247,9 +253,11 @@ pub fn publish_article(contents_path: &String, slug: &String) -> anyhow::Result<
     bail!("Not found");
   };
   ensure!(
-    article.index.is_none(),
+    !article.is_published(),
     "Article has already been published"
   );
+
+  article.set_published_at()?;
 
   let max_index = articles
     .iter()
@@ -271,8 +279,6 @@ pub fn publish_article(contents_path: &String, slug: &String) -> anyhow::Result<
       .context("parent does not exist")?
       .join(format!("{:02}_{}", max_index + 1, slug)),
   )?;
-
-  article.set_published_at()?;
 
   Ok(())
 }
