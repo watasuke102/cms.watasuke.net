@@ -77,6 +77,21 @@ impl Article {
 
     Ok(())
   }
+  fn set_published_at(&self) -> anyhow::Result<()> {
+    let datetime = util::now().format("%Y-%m-%dT%H:%M:%S").to_string();
+    let frontmatter = Frontmatter {
+      published_at: datetime.clone(),
+      updated_at: datetime,
+      ..self.frontmatter.clone()
+    };
+
+    std::fs::write(
+      Path::new(&self.article_path).join("article.md"),
+      format!("{}\n\n{}", frontmatter, self.body),
+    )?;
+
+    Ok(())
+  }
   pub fn get_public_or_none(self) -> Option<Self> {
     if self.is_published() {
       Some(self)
@@ -256,6 +271,8 @@ pub fn publish_article(contents_path: &String, slug: &String) -> anyhow::Result<
       .context("parent does not exist")?
       .join(format!("{:02}_{}", max_index + 1, slug)),
   )?;
+
+  article.set_published_at()?;
 
   Ok(())
 }

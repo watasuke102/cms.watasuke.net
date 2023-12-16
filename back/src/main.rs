@@ -67,7 +67,7 @@ async fn save_img(
   slug: &str,
   img_name: &str,
   context: &State<Context>,
-  file: rocket::fs::TempFile<'_>,
+  mut file: rocket::fs::TempFile<'_>,
 ) -> rocket::http::Status {
   if !context.config.allow_private_access {
     return rocket::http::Status::Forbidden;
