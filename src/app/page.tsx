@@ -7,9 +7,9 @@
 import React from 'react';
 import {getSdk} from '@cms-utils/graphql';
 import {GraphQLClient} from 'graphql-request';
-import Link from 'next/link';
 import {QlError} from '@cms-types/QlError';
 import {ArticlesTable} from './_components/ArticlesTable';
+import {NewArticle} from './_components/NewArticle';
 
 export default async function Top(): Promise<JSX.Element> {
   const sdk = getSdk(new GraphQLClient('http://127.0.0.1:10212/graphql'));
@@ -31,7 +31,7 @@ export default async function Top(): Promise<JSX.Element> {
   }
   return (
     <>
-      <h2>Draft</h2>
+      <NewArticle />
       <ArticlesTable articles={data.allArticles.filter(e => !e.isPublished)} />
       <h2>Published</h2>
       <ArticlesTable articles={data.allArticles.filter(e => e.isPublished)} />

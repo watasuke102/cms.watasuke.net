@@ -94,6 +94,14 @@ export type ArticleQueryVariables = Exact<{
 
 export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, isFavorite: boolean, isPublished: boolean, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
 
+export type NewArticleMutationVariables = Exact<{
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+}>;
+
+
+export type NewArticleMutation = { __typename?: 'Mutation', newArticle: string };
+
 export type UpdateArticleMutationVariables = Exact<{
   slug: Scalars['String']['input'];
   title: Scalars['String']['input'];
@@ -141,6 +149,11 @@ export const ArticleDocument = gql`
   }
 }
     `;
+export const NewArticleDocument = gql`
+    mutation newArticle($slug: String!, $title: String!) {
+  newArticle(slug: $slug, title: $title)
+}
+    `;
 export const UpdateArticleDocument = gql`
     mutation updateArticle($slug: String!, $title: String!, $tags: [String!]!, $isFavorite: Boolean!, $body: String!) {
   updateArticle(
@@ -170,6 +183,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     article(variables: ArticleQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<ArticleQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ArticleQuery>(ArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'article', 'query');
+    },
+    newArticle(variables: NewArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<NewArticleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<NewArticleMutation>(NewArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'newArticle', 'mutation');
     },
     updateArticle(variables: UpdateArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateArticleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateArticleMutation>(UpdateArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateArticle', 'mutation');

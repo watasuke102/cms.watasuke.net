@@ -30,6 +30,10 @@ query article($slug: String!) {
   }
 }
 
+mutation newArticle($slug: String!, $title: String!) {
+  newArticle(slug: $slug, title: $title)
+}
+
 mutation updateArticle($slug: String!, $title: String!, $tags: [String!]!, $isFavorite: Boolean!, $body: String!) {
   updateArticle(slug: $slug, title: $title, tags: $tags, isFavorite: $isFavorite, body: $body)
 }
