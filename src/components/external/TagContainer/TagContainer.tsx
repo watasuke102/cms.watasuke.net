@@ -6,6 +6,13 @@
 // This software is released under the MIT or MIT SUSHI-WARE License.
 import React from 'react';
 
-export function TagContainer(): JSX.Element {
-  return <span>Tag</span>;
+type Props = {
+  tags: {
+    slug: string;
+    name: string;
+  }[];
+};
+
+export function TagContainer(props: Props): JSX.Element {
+  return <span>Tag: {props.tags.map(e => e.name).join(', ')}</span>;
 }

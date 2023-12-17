@@ -93,7 +93,18 @@ export default function EditorPage({article}: Props): JSX.Element {
         <Link href='/' className={css.back_button}>
           <LeftIcon />
         </Link>
-        <span className={css.header_title}>{state.title}</span>
+        {is_published ? (
+          <a
+            href={`https://watasuke.net/blog/article/${article.slug}`}
+            rel='noreferrer'
+            target='_blank'
+            className={css.header_title}
+          >
+            {state.title}
+          </a>
+        ) : (
+          <span className={css.header_title}>{state.title}</span>
+        )}
       </header>
       <section className={css.container}>
         <MdEditor
