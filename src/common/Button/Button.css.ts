@@ -4,18 +4,8 @@
 // Email  : <watasuke102@gmail.com>
 // Twitter: @Watasuke102
 // This software is released under the MIT or MIT SUSHI-WARE License.
-import {ComplexStyleRule, globalStyle, style} from '@vanilla-extract/css';
+import {globalStyle, style} from '@vanilla-extract/css';
 import {color} from '@watasuke.net/components/common/color';
-
-const common: ComplexStyleRule = {
-  width: '100%',
-  height: '100%',
-  borderRadius: 2,
-  border: 'none',
-  display: 'grid',
-  whiteSpace: 'nowrap',
-  gridTemplateColumns: 'auto 1fr',
-};
 
 export const css = {
   enabled: style({
@@ -41,7 +31,6 @@ export const css = {
     margin: 'auto',
   }),
   button_text: style({
-    ...common,
     color: color.p0,
     ':hover': {
       backgroundColor: `${color.p0}44`,
@@ -50,8 +39,17 @@ export const css = {
       backgroundColor: 'inherit',
     },
   }),
+
+  common: style({
+    width: '100%',
+    height: '100%',
+    borderRadius: 2,
+    border: 'none',
+    display: 'grid',
+    whiteSpace: 'nowrap',
+    gridTemplateColumns: 'auto 1fr',
+  }),
   button_outlined: style({
-    ...common,
     color: color.p0,
     border: `2px solid ${color.p0}`,
     ':hover': {
@@ -62,7 +60,6 @@ export const css = {
     },
   }),
   button_contained: style({
-    ...common,
     color: color.bg,
     backgroundColor: color.p0,
     ':hover': {
@@ -74,7 +71,7 @@ export const css = {
   }),
 };
 
-globalStyle(`${css.icon} svg`, {
+globalStyle(`${css.common} svg`, {
   width: '100%',
   height: '100%',
 });

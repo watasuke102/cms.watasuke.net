@@ -29,13 +29,13 @@ export function Button(props: Props): JSX.Element {
   })();
   return (
     <button
-      className={`${props.disabled ? css.disabled : css.enabled} ${class_name}`}
+      className={`${css.common} ${props.disabled ? css.disabled : css.enabled} ${class_name}`}
       disabled={props.disabled}
       onClick={props.on_click}
       aria-label={props.aria_label}
     >
-      <div className={css.icon}>{props.icon}</div>
-      <span className={css.text}>{props.text}</span>
+      {props.icon}
+      {props.text !== '' && <span className={css.text}>{props.text}</span>}
     </button>
   );
 }
