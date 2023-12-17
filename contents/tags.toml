@@ -1,3 +1,27 @@
 [[tags]]
 slug = "tag-slug"
 name = "Tag name"
+
+[[tags]]
+slug = "tag-0"
+name = "Tag(0)"
+
+[[tags]]
+slug = "tag-1"
+name = "Tag(1)"
+
+[[tags]]
+slug = "tag-2"
+name = "Tag(2)"
+
+[[tags]]
+slug = "tag-3"
+name = "Tag(3)"
+
+[[tags]]
+slug = "tag-4"
+name = "Tag(4)"
+
+[[tags]]
+slug = "tag-5"
+name = "Tag(5)"

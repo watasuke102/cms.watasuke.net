@@ -32,12 +32,19 @@ export type Article = {
 export type Mutation = {
   __typename?: 'Mutation';
   newArticle: Scalars['String']['output'];
+  newTag: Scalars['String']['output'];
   publishArticle: Scalars['String']['output'];
   updateArticle: Scalars['String']['output'];
 };
 
 
 export type MutationNewArticleArgs = {
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationNewTagArgs = {
   slug: Scalars['String']['input'];
   title: Scalars['String']['input'];
 };
@@ -94,6 +101,19 @@ export type ArticleQueryVariables = Exact<{
 
 export type ArticleQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug: string, title: string, publishedAt: string, updatedAt: string, isFavorite: boolean, isPublished: boolean, body: string, tags: Array<{ __typename?: 'Tag', slug: string, name: string }> } | null };
 
+export type AllTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllTagsQuery = { __typename?: 'Query', allTags: Array<{ __typename?: 'Tag', slug: string, name: string }> };
+
+export type NewTagMutationVariables = Exact<{
+  slug: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+}>;
+
+
+export type NewTagMutation = { __typename?: 'Mutation', newTag: string };
+
 export type NewArticleMutationVariables = Exact<{
   slug: Scalars['String']['input'];
   title: Scalars['String']['input'];
@@ -149,6 +169,19 @@ export const ArticleDocument = gql`
   }
 }
     `;
+export const AllTagsDocument = gql`
+    query allTags {
+  allTags {
+    slug
+    name
+  }
+}
+    `;
+export const NewTagDocument = gql`
+    mutation newTag($slug: String!, $title: String!) {
+  newTag(slug: $slug, title: $title)
+}
+    `;
 export const NewArticleDocument = gql`
     mutation newArticle($slug: String!, $title: String!) {
   newArticle(slug: $slug, title: $title)
@@ -183,6 +216,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     article(variables: ArticleQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<ArticleQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ArticleQuery>(ArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'article', 'query');
+    },
+    allTags(variables?: AllTagsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<AllTagsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AllTagsQuery>(AllTagsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allTags', 'query');
+    },
+    newTag(variables: NewTagMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<NewTagMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<NewTagMutation>(NewTagDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'newTag', 'mutation');
     },
     newArticle(variables: NewArticleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<NewArticleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<NewArticleMutation>(NewArticleDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'newArticle', 'mutation');

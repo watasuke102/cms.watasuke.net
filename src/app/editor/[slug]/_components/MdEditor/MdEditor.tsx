@@ -17,6 +17,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import {useShortcut} from '@cms-common/useShortcut/useShortcut';
 import {Dialog} from '@cms-common/Dialog';
 import {ImageUploader} from '@cms-common/ImageUploader';
+import {TagEditor} from '../TagEditor';
 
 type Props = {
   slug: string;
@@ -116,6 +117,11 @@ export default function MdEditor(props: Props): JSX.Element {
                   className={css.input_text}
                 />
               </div>
+              <TagEditor
+                current_tags={props.state.tags}
+                all_tags={props.state.all_tags}
+                dispatcher={props.dispatcher}
+              />
             </Accordion.Content>
           </Accordion.Item>
         </Accordion.Root>

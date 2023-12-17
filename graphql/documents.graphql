@@ -30,6 +30,17 @@ query article($slug: String!) {
   }
 }
 
+query allTags {
+  allTags {
+    slug
+    name
+  }
+}
+
+mutation newTag($slug: String!, $title: String!) {
+  newTag(slug: $slug, title: $title)
+}
+
 mutation newArticle($slug: String!, $title: String!) {
   newArticle(slug: $slug, title: $title)
 }

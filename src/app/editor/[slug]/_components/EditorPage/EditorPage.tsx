@@ -20,7 +20,7 @@ import {css, toast} from './EditorPage.css';
 import {apiUrl} from '@config';
 import * as Toast from '@radix-ui/react-toast';
 import {QlError} from '@cms-types/QlError';
-import {article_reducer} from '../ArticleReducer';
+import {StateType, article_reducer} from '../ArticleReducer';
 import {useImmerReducer} from 'use-immer';
 import {Dialog} from '@cms-common/Dialog';
 import {Button} from '@cms-common/Button';
@@ -34,11 +34,17 @@ export default function EditorPage({article}: Props): JSX.Element {
     body: article.body,
     title: article.title,
     tags: article.tags.map(e => e.slug),
+    all_tags: [] as StateType['all_tags'],
   });
   const [is_published, set_is_published] = React.useState(article.isPublished);
   const [toast_status, set_toast_status] = React.useState({title: 'success', desc: ''});
   const [is_toast_open, set_is_toast_open] = React.useState(false);
   const [is_dialog_open, set_is_dialog_open] = React.useState(false);
+
+  React.useEffect(() => {
+    const sdk = getSdk(new GraphQLClient(`${apiUrl}/graphql`));
+    sdk.allTags().then(res => dispatch({type: 'alltag/update', all_tags: res.allTags}));
+  }, []);
 
   const save = React.useCallback(async () => {
     try {
