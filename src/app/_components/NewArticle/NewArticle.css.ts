@@ -9,6 +9,7 @@ import {color} from '@watasuke.net/components/common/color';
 
 export const css = {
   header: style({
+    width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

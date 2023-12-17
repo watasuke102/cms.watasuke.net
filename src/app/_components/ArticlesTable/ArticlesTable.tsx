@@ -31,8 +31,8 @@ export function ArticlesTable(props: Props): JSX.Element {
           <tr>
             <th>title</th>
             <th>slug</th>
-            <th>updated_at</th>
-            <th>published_at</th>
+            <th className={css.datetime}>updated_at</th>
+            <th className={css.datetime}>published_at</th>
           </tr>
         </thead>
         <tbody>

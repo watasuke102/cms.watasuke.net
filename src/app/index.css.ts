@@ -11,7 +11,7 @@ export const css = {
     position: 'absolute',
     top: 56,
     left: 0,
-    width: '100dvw',
+    width: 'calc(100dvw - 24px)',
     height: 'calc(100dvh - 56px)',
     padding: '0 12px',
   }),
