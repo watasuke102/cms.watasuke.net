@@ -22,7 +22,7 @@ export const css = {
     'input input'
     `,
     alignItems: 'baseline',
-    margin: 8,
+    marginBottom: 12,
   }),
   label: style({
     gridArea: 'label',

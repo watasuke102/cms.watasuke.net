@@ -22,7 +22,6 @@ export default function RootLayout({children}: {children: React.ReactNode}): JSX
       </head>
       <body>
         <div className={css.container}>
-          <section>menu</section>
           <main>{children}</main>
         </div>
       </body>
