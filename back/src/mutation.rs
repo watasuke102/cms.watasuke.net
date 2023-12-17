@@ -1,7 +1,7 @@
 use juniper::{graphql_object, graphql_value};
 
 use crate::{
-  cms::{self, articles},
+  cms::{self, articles, tags},
   Context,
 };
 
@@ -9,6 +9,21 @@ use crate::{
 pub struct Mutation;
 #[graphql_object(context = crate::Context)]
 impl Mutation {
+  fn new_tag(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
+    if !context.config.allow_private_access {
+      return Err(juniper::FieldError::new(
+        "Private access is forbidded",
+        graphql_value!(""),
+      ));
+    }
+    match tags::new_tag(&context.config.contents_path, &slug, &title) {
+      Ok(_) => Ok(slug),
+      Err(err) => Err(juniper::FieldError::new(
+        "new_tag() failed",
+        graphql_value!(err.to_string()),
+      )),
+    }
+  }
   fn new_article(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
     if !context.config.allow_private_access {
       return Err(juniper::FieldError::new(

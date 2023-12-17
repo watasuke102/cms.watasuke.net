@@ -9,6 +9,7 @@ type Tag {
 }
 
 type Mutation {
+  newTag(slug: String!, title: String!): String!
   newArticle(slug: String!, title: String!): String!
   updateArticle(slug: String!, title: String!, tags: [String!]!, isFavorite: Boolean!, body: String!): String!
   publishArticle(slug: String!): String!
