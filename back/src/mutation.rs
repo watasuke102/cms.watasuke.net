@@ -12,7 +12,7 @@ impl Mutation {
   fn new_tag(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
     if !context.config.allow_private_access {
       return Err(juniper::FieldError::new(
-        "Private access is forbidded",
+        "Private access is forbidden",
         graphql_value!(""),
       ));
     }
@@ -27,7 +27,7 @@ impl Mutation {
   fn new_article(slug: String, title: String, context: &Context) -> juniper::FieldResult<String> {
     if !context.config.allow_private_access {
       return Err(juniper::FieldError::new(
-        "Private access is forbidded",
+        "Private access is forbidden",
         graphql_value!(""),
       ));
     }
@@ -49,7 +49,7 @@ impl Mutation {
   ) -> juniper::FieldResult<String> {
     if !context.config.allow_private_access {
       return Err(juniper::FieldError::new(
-        "Private access is forbidded",
+        "Private access is forbidden",
         graphql_value!(""),
       ));
     }
@@ -84,7 +84,7 @@ impl Mutation {
   fn publish_article(slug: String, context: &Context) -> juniper::FieldResult<String> {
     if !context.config.allow_private_access {
       return Err(juniper::FieldError::new(
-        "Private access is forbidded",
+        "Private access is forbidden",
         graphql_value!(""),
       ));
     }
