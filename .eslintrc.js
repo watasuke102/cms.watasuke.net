@@ -51,7 +51,7 @@ module.exports = {
       'line',
       [
         ' cms.watasuke.net',
-        {pattern: ' CopyRight \\(c\\) \\d{4} watasuke', template: ' CopyRight (c) 2023 watasuke'},
+        {pattern: ' CopyRight \\(c\\) 2023-\\d{4} watasuke', template: ' CopyRight (c) 2023-2024 watasuke'},
         '',
         ' Email  : <watasuke102@gmail.com>',
         ' Twitter: @Watasuke102',

@@ -1,5 +1,5 @@
 // cms.watasuke.net
-// CopyRight (c) 2023 watasuke
+// CopyRight (c) 2023-2024 watasuke
 //
 // Email  : <watasuke102@gmail.com>
 // Twitter: @Watasuke102
