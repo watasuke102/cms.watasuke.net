@@ -269,7 +269,7 @@ pub fn publish_article(contents_path: &String, slug: &String) -> anyhow::Result<
       }
     })
     .max()
-    .context("cannot find maximum index")?;
+    .unwrap_or(-1);
 
   let path = Path::new(&article.article_path);
   std::fs::rename(
