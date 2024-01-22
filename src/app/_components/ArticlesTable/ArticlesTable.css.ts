@@ -9,7 +9,7 @@ import {color} from '@watasuke.net/components/common/color';
 
 export const css = {
   table: style({
-    width: '95dvw',
+    width: '100%',
   }),
   item: style({
     ':hover': {
