@@ -119,7 +119,7 @@ async fn main() -> anyhow::Result<()> {
     let graphql_dir = std::env::current_dir()?.join(path);
     std::fs::create_dir_all(&graphql_dir)?;
     let mut schema_file = std::fs::File::create(graphql_dir.join("schema.graphql"))?;
-    schema_file.write_all(schema.as_schema_language().as_bytes())?;
+    schema_file.write_all(schema.as_sdl().as_bytes())?;
   }
 
   rocket::build()
