@@ -42,6 +42,7 @@ impl Mutation {
   fn update_article(
     slug: String,
     title: String,
+    tldr: String,
     tags: Vec<String>,
     is_favorite: bool,
     body: String,
@@ -53,6 +54,7 @@ impl Mutation {
         graphql_value!(""),
       ));
     }
+    let tldr = if tldr.is_empty() { None } else { Some(tldr) };
     let articles = {
       let tags = cms::tags::read_tags(&context.config.contents_path);
       match cms::articles::read_articles(&context.config.contents_path, &tags) {
@@ -73,7 +75,7 @@ impl Mutation {
       ));
     };
 
-    match article.update(title, tags, is_favorite, body) {
+    match article.update(title, tldr, tags, is_favorite, body) {
       Ok(_) => Ok(slug),
       Err(err) => Err(juniper::FieldError::new(
         "article.update() failed",

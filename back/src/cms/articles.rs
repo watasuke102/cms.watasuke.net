@@ -13,6 +13,7 @@ use super::tags;
 #[derive(Clone, Debug, Deserialize)]
 struct Frontmatter {
   title:        String,
+  tldr:         Option<String>,
   tags:         Vec<String>,
   is_favorite:  bool,
   published_at: String,
@@ -29,13 +30,23 @@ impl std::fmt::Display for Frontmatter {
     write!(
       f,
       r"---
-title:        '{}'
+title:        '{}'{}
+
 tags:         [{}]
 is_favorite:  {}
 published_at: '{}'
 updated_at:   '{}'
 ---",
-      self.title, tags, self.is_favorite, self.published_at, self.updated_at
+      self.title,
+      if let Some(tldr) = &self.tldr {
+        format!("\ntldr:         '{}'", tldr)
+      } else {
+        String::from("")
+      },
+      tags,
+      self.is_favorite,
+      self.published_at,
+      self.updated_at
     )
   }
 }
@@ -58,12 +69,14 @@ impl Article {
   pub fn update(
     &self,
     title: String,
+    tldr: Option<String>,
     tags: Vec<String>,
     is_favorite: bool,
     body: String,
   ) -> anyhow::Result<()> {
     let frontmatter = Frontmatter {
       title,
+      tldr,
       tags,
       is_favorite,
       published_at: self.frontmatter.published_at.clone(),
@@ -110,6 +123,18 @@ impl Article {
   }
   fn title(&self) -> &str {
     &self.frontmatter.title
+  }
+  fn tldr(&self) -> String {
+    if let Some(tldr) = &self.frontmatter.tldr {
+      tldr.clone()
+    } else {
+      self
+        .body
+        .chars()
+        .filter(|x| *x != '\n')
+        .take(80)
+        .collect::<String>()
+    }
   }
   fn tags(&self) -> &[tags::Tag] {
     &self.tags
@@ -223,6 +248,7 @@ pub fn create_article(contents_path: &String, slug: &String, title: &String) -> 
 
   let frontmatter = Frontmatter {
     title:        title.clone(),
+    tldr:         None,
     tags:         Vec::new(),
     is_favorite:  false,
     published_at: "".to_string(),
