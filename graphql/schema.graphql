@@ -1,29 +1,25 @@
-type Sitedata {
-  profile: String!
-  shortProfile: String!
-}
-
-type Tag {
-  slug: String!
-  name: String!
-}
-
-type Mutation {
-  newTag(slug: String!, title: String!): String!
-  newArticle(slug: String!, title: String!): String!
-  updateArticle(slug: String!, title: String!, tags: [String!]!, isFavorite: Boolean!, body: String!): String!
-  publishArticle(slug: String!): String!
+schema {
+  query: Query
+  mutation: Mutation
 }
 
 type Article {
   slug: String!
   body: String!
   title: String!
+  tldr: String!
   tags: [Tag!]!
   isFavorite: Boolean!
   publishedAt: String!
   updatedAt: String!
   isPublished: Boolean!
+}
+
+type Mutation {
+  newTag(slug: String!, title: String!): String!
+  newArticle(slug: String!, title: String!): String!
+  updateArticle(slug: String!, title: String!, tldr: String!, tags: [String!]!, isFavorite: Boolean!, body: String!): String!
+  publishArticle(slug: String!): String!
 }
 
 type Query {
@@ -34,7 +30,12 @@ type Query {
   sitedata: Sitedata!
 }
 
-schema {
-  query: Query
-  mutation: Mutation
+type Sitedata {
+  profile: String!
+  shortProfile: String!
+}
+
+type Tag {
+  slug: String!
+  name: String!
 }
