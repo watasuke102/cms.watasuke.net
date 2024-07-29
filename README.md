@@ -1,5 +1,7 @@
 # cms.watasuke.net
 
+merged into [watasuke.net](https://github.com/watasuke102/watasuke.net)
+
 [https://watasuke.net](https://watasuke.net) の記事をいじる
 
 ## setup
